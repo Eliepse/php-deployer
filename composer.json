@@ -1,0 +1,11 @@
+{
+    "name": "eliepse/php-deployer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eliepse",
+            "email": "contact@eliepse.fr"
+        }
+    ],
+    "require": {}
+}
