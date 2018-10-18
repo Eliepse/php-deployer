@@ -63,7 +63,7 @@ class Compiler
     }
 
 
-    private function generateTempFile(ShouldCompile $object): string
+    private function generateTempFile(ShouldCompile $compilable): string
     {
         $filename = uniqid() . ".php";
         $filepath = __DIR__ . "/../../resources/temp/";
@@ -72,7 +72,7 @@ class Compiler
             mkdir($filepath, '0744', true);
         }
 
-        file_put_contents($filepath . $filename, $object->getRaw());
+        file_put_contents($filepath . $filename, $compilable->getUncompiled());
 
         return $filepath . $filename;
     }

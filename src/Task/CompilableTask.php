@@ -37,7 +37,7 @@ class CompilableTask extends Task implements ShouldCompile
     }
 
 
-    public function getRaw(): string
+    public function getUncompiled(): string
     {
         return $this->command_raw ?? "";
     }
