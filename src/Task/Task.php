@@ -4,7 +4,6 @@
 namespace Eliepse\Deployer\Task;
 
 
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class Task
