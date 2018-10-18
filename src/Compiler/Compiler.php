@@ -31,9 +31,14 @@ class Compiler
     }
 
 
-    public function compile(ShouldCompile $object): void
+    /**
+     * @param ShouldCompile|ShouldCompileFile $compilable
+     */
+    public function compile(ShouldCompile $compilable): void
     {
-        $tempPath = $this->generateTempFile($object);
+        $tempPath = is_a($compilable, ShouldCompileFile::class)
+            ? $compilable->getSourcePath()
+            : $this->generateTempFile($compilable);
 
         ob_start() && extract($this->getData());
 
@@ -41,9 +46,10 @@ class Compiler
 
         $compiled = ob_get_clean();
 
-        @unlink($tempPath);
+        if (!is_a($compilable, ShouldCompileFile::class))
+            @unlink($tempPath);
 
-        $object->setCompiled($compiled);
+        $compilable->setCompiled($compiled);
     }
 
 
