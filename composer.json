@@ -7,8 +7,16 @@
             "email" : "contact@eliepse.fr"
         }
     ],
-    "require": {
-        "symfony/process": "^4.1"
+    "autoload" : {
+        "psr-4" : {
+            "Eliepse\\Deployer\\" : "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "require" : {
         "symfony/process" : "^4.1"
     },
