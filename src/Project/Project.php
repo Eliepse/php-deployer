@@ -133,9 +133,12 @@ class Project implements CompilerResource
 
     public function isInitialized(): bool
     {
+        if (!is_dir($this->getDeployPath())) return false;
+
         if (is_link($this->getDeployPath() . "/current")) return true;
 
         if (!is_dir($this->getDeployPath() . "/releases")) return false;
+
         if (!is_dir($this->getDeployPath() . "/shared")) return false;
 
         return true;
