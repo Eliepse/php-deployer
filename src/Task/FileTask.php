@@ -54,5 +54,5 @@ class FileTask extends CompilableTask implements ShouldCompileFile
     {
         return $this->filepath;
     }
-    
+
 }
