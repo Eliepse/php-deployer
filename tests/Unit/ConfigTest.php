@@ -22,9 +22,18 @@ class ConfigTest extends TestCase
     public function testMissingRequired()
     {
         $this->expectException(ConfigurationException::class);
-        $this->expectExceptionMessage("The configuration is missing required elements: foo, bar");
+        $this->expectExceptionMessage("The configuration is missing required elements: fooz, barz");
 
-        Config::load(base_path("tests/fixtures/projects/test.json"), new Config(["foo", "bar"]));
+        Config::load(base_path("tests/fixtures/projects/test.json"), new Config(["fooz", "barz"]));
+    }
+
+
+    public function testEmptyRequired()
+    {
+        $this->expectException(ConfigurationException::class);
+        $this->expectExceptionMessage("The configuration is missing required values for keys: baz");
+
+        Config::load(base_path("tests/fixtures/projects/test.json"), new Config(["foo", "baz"]));
     }
 
 

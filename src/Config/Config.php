@@ -99,7 +99,7 @@ class Config
             return;
 
         // Find missing elements
-        $missing_keys = array_keys(array_diff(array_flip($this->required), $this->attributes));
+        $missing_keys = array_values(array_diff($this->required, array_flip($this->attributes)));
 
         if (count($missing_keys) > 0) {
             $keys = join(", ", $missing_keys);
@@ -107,12 +107,10 @@ class Config
         }
 
         // Find empty required elements
-        $empty_keys = array_keys(array_filter(
-            array_intersect($this->attributes, $this->required),
-            function ($value) { return empty($value); }));
+        $empty_keys = array_filter(array_intersect_key($this->attributes, array_flip($this->required)), function ($value) { return empty($value); });
 
         if (count($empty_keys) > 0) {
-            $keys = join(", ", $missing_keys);
+            $keys = join(", ", array_keys($empty_keys));
             throw new ConfigurationException("The configuration is missing required values for keys: $keys");
         }
     }

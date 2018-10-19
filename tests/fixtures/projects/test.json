@@ -1,4 +1,6 @@
 {
+    "foo" : "bar",
+    "baz" : "",
     "deploy_path" : "/path/to/project",
     "git_url" : "git@github.com:Eliepse/php-deployer.git",
     "branch" : "dev",
