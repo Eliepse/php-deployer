@@ -2,6 +2,7 @@
 
 namespace Eliepse\Deployer\Project;
 
+use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
@@ -75,6 +76,25 @@ class Project implements CompilerResource
         $task = FileTask::find('init');
 
         (new ProjectCompiler($this, new Release))->compile($task);
+
+        $task->run();
+    }
+
+
+    /**
+     * @throws ProjectException
+     * @throws TaskRunFailedException
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     */
+    public function destroy(): void
+    {
+        if (!$this->isInitialized())
+            throw new ProjectException("The project has not been initialized.");
+
+        $task = FileTask::find('remove');
+
+        (new Compiler($this))->compile($task);
 
         $task->run();
     }

@@ -33,4 +33,17 @@ class ProjectTest extends TestCase
         $this->assertFileExists(base_path("tests/fixtures/temp/test_deploy/shared/LICENSE.md"));
     }
 
+
+    public function testDestroy()
+    {
+        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
+
+        $this->assertTrue($project->isInitialized());
+
+        $project->destroy();
+
+        $this->assertFalse($project->isInitialized());
+        $this->assertDirectoryNotExists(base_path("tests/fixtures/temp/test_deploy"));
+    }
+
 }
