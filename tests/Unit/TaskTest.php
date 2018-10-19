@@ -15,7 +15,8 @@ class TaskTest extends TestCase
     {
         $task = new Task("foo", "echo bar");
 
-        $this->assertTrue($task->run());
+        $task->run();
+
         $this->assertEquals("bar", $task->getOutput());
     }
 
@@ -28,7 +29,8 @@ class TaskTest extends TestCase
 
         $compiler->compile($task);
 
-        $this->assertTrue($task->run());
+        $task->run();
+
         $this->assertEquals("bar", $task->getOutput());
     }
 
@@ -39,7 +41,8 @@ class TaskTest extends TestCase
 
         (new Compiler)->compile($task);
 
-        $this->assertTrue($task->run());
+        $task->run();
+        
         $this->assertEquals("Hello world !", $task->getOutput());
     }
 

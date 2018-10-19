@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Task;
 
 
+use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Symfony\Component\Process\Process;
 
 class Task
@@ -33,13 +34,17 @@ class Task
     }
 
 
-    public function run(): bool
+    /**
+     * @throws TaskRunFailedException
+     */
+    public function run(): void
     {
         $this->process = new Process($this->command);
 
         $this->process->run();
 
-        return $this->process->isSuccessful();
+        if (!$this->process->isSuccessful())
+            throw new TaskRunFailedException();
     }
 
 
