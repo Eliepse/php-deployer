@@ -44,7 +44,7 @@ class Task
         $this->process->run();
 
         if (!$this->process->isSuccessful())
-            throw new TaskRunFailedException();
+            throw new TaskRunFailedException($this->process->getExitCodeText(), $this->process->getExitCode());
     }
 
 
