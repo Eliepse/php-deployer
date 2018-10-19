@@ -106,7 +106,7 @@ class Config
             return;
 
         // Find missing elements
-        $missing_keys = array_values(array_diff($this->required, array_flip($this->attributes)));
+        $missing_keys = array_values(array_diff($this->required, array_keys($this->attributes)));
 
         if (count($missing_keys) > 0) {
             $keys = join(", ", $missing_keys);
