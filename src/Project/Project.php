@@ -95,7 +95,7 @@ class Project implements CompilerResource
      */
     public function getDeployPath()
     {
-        return $this->deploy_path;
+        return $this->deploy_path[0] === "/" ? $this->deploy_path : base_path($this->deploy_path);
     }
 
 
