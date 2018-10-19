@@ -23,8 +23,11 @@ class ProjectTest extends TestCase
 
     public function testInit()
     {
-        $project = Project::init("test_deploy", base_path("tests/fixtures/projects"));
+        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
 
+        $project->initialize();
+
+        $this->assertTrue($project->isInitialized());
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy"));
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/shared/resources"));
         $this->assertFileExists(base_path("tests/fixtures/temp/test_deploy/shared/LICENSE.md"));

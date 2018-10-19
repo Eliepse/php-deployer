@@ -5,8 +5,10 @@ namespace Eliepse\Deployer\Project;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
+use Eliepse\Deployer\Exception\ProjectException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Task\FileTask;
+use Eliepse\Deployer\Task\Task;
 
 class Project implements CompilerResource
 {
@@ -47,30 +49,6 @@ class Project implements CompilerResource
 
 
     /**
-     * @param string $name
-     * @param string|null $folderPath
-     * @return Project
-     * @throws \Eliepse\Deployer\Exception\CompileException
-     * @throws \Eliepse\Deployer\Exception\ConfigurationException
-     * @throws \Eliepse\Deployer\Exception\JsonException
-     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
-     * @throws TaskRunFailedException
-     */
-    public static function init(string $name, string $folderPath = null): self
-    {
-        $project = static::find($name, $folderPath);
-
-        $task = FileTask::find('init');
-
-        (new ProjectCompiler($project, new Release))->compile($task);
-
-        $task->run();
-
-        return $project;
-    }
-
-
-    /**
      * @param Config $config
      */
     private function hydrate(Config $config): void
@@ -80,6 +58,36 @@ class Project implements CompilerResource
             $this->$key = $value;
 
         }
+    }
+
+
+    /**
+     * @throws ProjectException
+     * @throws TaskRunFailedException
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     */
+    public function initialize(): void
+    {
+        if ($this->isInitialized())
+            throw new ProjectException("The project has already been initialized.");
+
+        $task = FileTask::find('init');
+
+        (new ProjectCompiler($this, new Release))->compile($task);
+
+        $task->run();
+    }
+
+
+    public function isInitialized(): bool
+    {
+        if (is_link($this->getDeployPath() . "/current")) return true;
+
+        if (!is_dir($this->getDeployPath() . "/releases")) return false;
+        if (!is_dir($this->getDeployPath() . "/shared")) return false;
+
+        return true;
     }
 
 
