@@ -48,6 +48,12 @@ class Task
     }
 
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+
     public function getCommand(): string
     {
         return $this->command;
