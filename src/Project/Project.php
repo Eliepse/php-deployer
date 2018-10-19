@@ -9,7 +9,6 @@ use Eliepse\Deployer\Config\Config;
 use Eliepse\Deployer\Exception\ProjectException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Task\FileTask;
-use Eliepse\Deployer\Task\Task;
 
 class Project implements CompilerResource
 {
@@ -24,6 +23,10 @@ class Project implements CompilerResource
     private $release_history = 3;
 
     private $shared_folders = [];
+
+    private $links = [];
+
+    private $tasks_sequence = ["release", "links", "activate", "history"];
 
 
     /**
@@ -100,6 +103,34 @@ class Project implements CompilerResource
     }
 
 
+    /**
+     * @throws ProjectException
+     * @throws TaskRunFailedException
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     */
+    public function deploy(): Release
+    {
+        if (!$this->isInitialized())
+            throw new ProjectException("The project has not been initialized.");
+
+        $release = new Release();
+        $compiler = new ProjectCompiler($this, $release);
+
+        foreach ($this->tasks_sequence as $name) {
+
+            $task = FileTask::find($name);
+
+            $compiler->compile($task);
+
+            $task->run();
+        }
+
+        return $release;
+
+    }
+
+
     public function isInitialized(): bool
     {
         if (is_link($this->getDeployPath() . "/current")) return true;
@@ -165,11 +196,13 @@ class Project implements CompilerResource
     public function getCompilingData(): array
     {
         return [
-            "project_name"           => $this->getName(),
-            "project_path"           => $this->getDeployPath(),
-            "project_repository"     => $this->getGitUrl(),
-            "project_branch"         => $this->getBranch(),
-            "project_shared_folders" => $this->shared_folders,
+            "project_name"            => $this->getName(),
+            "project_path"            => $this->getDeployPath(),
+            "project_repository"      => $this->getGitUrl(),
+            "project_branch"          => $this->getBranch(),
+            "project_release_history" => $this->getReleaseHistory(),
+            "project_shared_folders"  => $this->shared_folders,
+            "project_links"           => $this->links,
         ];
     }
 }

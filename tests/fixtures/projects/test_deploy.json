@@ -4,5 +4,8 @@
     "shared_folders" : {
         "/resources" : "/resources",
         "/LICENSE" : "/LICENSE.md"
+    },
+    "links" : {
+        "/resources" : "/resources"
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Eliepse\Deployer\Project\Project;
+use Eliepse\Deployer\Project\Release;
 use PHPUnit\Framework\TestCase;
 
 class ProjectTest extends TestCase
@@ -31,6 +32,18 @@ class ProjectTest extends TestCase
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy"));
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/shared/resources"));
         $this->assertFileExists(base_path("tests/fixtures/temp/test_deploy/shared/LICENSE.md"));
+    }
+
+
+    public function testDeploy()
+    {
+        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
+
+        $release = $project->deploy();
+
+        $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}"));
+        $this->assertTrue(is_link(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}/resources")));
+        $this->assertTrue(is_link(base_path("tests/fixtures/temp/test_deploy/current")));
     }
 
 
