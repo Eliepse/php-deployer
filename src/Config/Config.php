@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Config;
 
 
 use Eliepse\Deployer\Exception\ConfigurationException;
+use Eliepse\Deployer\Exception\JsonException;
 
 class Config
 {
@@ -46,6 +47,7 @@ class Config
      * @param Config|null $config When provided, hydrate and return this object instead of creating a new one
      * @return Config
      * @throws ConfigurationException
+     * @throws JsonException
      */
     public static function load(string $filepath, Config $config = null): self
     {
@@ -54,7 +56,12 @@ class Config
 
         $config = $config ?? new Config();
 
-        $config->hydrate(json_decode(file_get_contents($filepath), true));
+        $json = json_decode(file_get_contents($filepath), true);
+
+        if (json_last_error() > 0)
+            throw new JsonException(json_last_error_msg());
+
+        $config->hydrate($json);
 
         return $config;
     }
