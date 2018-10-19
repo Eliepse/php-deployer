@@ -3,8 +3,9 @@
 namespace Eliepse\Deployer\Project;
 
 use Carbon\Carbon;
+use Eliepse\Deployer\Compiler\CompilerResource;
 
-class Release
+class Release implements CompilerResource
 {
 
     /**
@@ -25,4 +26,11 @@ class Release
         return $this->time->format("YmdHis");
     }
 
+
+    public function getCompilingData(): array
+    {
+        return [
+            "release_name" => $this->getFolderName(),
+        ];
+    }
 }

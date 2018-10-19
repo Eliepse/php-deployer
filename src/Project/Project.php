@@ -2,11 +2,16 @@
 
 namespace Eliepse\Deployer\Project;
 
+use Eliepse\Deployer\Compiler\CompilerResource;
+use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
+use Eliepse\Deployer\Exception\CompileException;
 use Eliepse\Deployer\Exception\ConfigurationException;
 use Eliepse\Deployer\Exception\ProjectNotFoundException;
+use Eliepse\Deployer\Exception\TaskNotFoundException;
+use Eliepse\Deployer\Task\FileTask;
 
-class Project
+class Project implements CompilerResource
 {
     private $name;
 
@@ -41,6 +46,31 @@ class Project
     }
 
 
+    /**
+     * @param string $name
+     * @param string|null $folderPath
+     * @return Project
+     * @throws ConfigurationException
+     * @throws TaskNotFoundException
+     * @throws CompileException
+     */
+    public static function init(string $name, string $folderPath = null): self
+    {
+        $project = static::find($name, $folderPath);
+
+        $task = FileTask::find('init');
+
+        (new ProjectCompiler($project, new Release))->compile($task);
+
+        $task->run();
+
+        return $project;
+    }
+
+
+    /**
+     * @param Config $config
+     */
     private function hydrate(Config $config): void
     {
         foreach ($config->getAll() as $key => $value) {
@@ -95,4 +125,14 @@ class Project
         return $this->release_history;
     }
 
+
+    public function getCompilingData(): array
+    {
+        return [
+            "project_name"       => $this->getName(),
+            "project_path"       => $this->getDeployPath(),
+            "project_repository" => $this->getGitUrl(),
+            "project_branch"     => $this->getBranch(),
+        ];
+    }
 }
