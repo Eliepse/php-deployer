@@ -20,4 +20,14 @@ class ProjectTest extends TestCase
         $this->assertEquals(3, $project->getReleaseHistory());
     }
 
+
+    public function testInit()
+    {
+        $project = Project::init("test_deploy", base_path("tests/fixtures/projects"));
+
+        $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy"));
+        $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/shared/resources"));
+        $this->assertFileExists(base_path("tests/fixtures/temp/test_deploy/shared/LICENSE.md"));
+    }
+
 }

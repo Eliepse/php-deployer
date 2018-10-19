@@ -1,3 +1,6 @@
 /vendor/
 .idea/
 /resources/temp/
+/tests/fixtures/temp/*
+
+!.gitkeep

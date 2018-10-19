@@ -5,10 +5,7 @@ namespace Eliepse\Deployer\Project;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
-use Eliepse\Deployer\Exception\CompileException;
-use Eliepse\Deployer\Exception\ConfigurationException;
-use Eliepse\Deployer\Exception\ProjectNotFoundException;
-use Eliepse\Deployer\Exception\TaskNotFoundException;
+use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Task\FileTask;
 
 class Project implements CompilerResource
@@ -23,18 +20,21 @@ class Project implements CompilerResource
 
     private $release_history = 3;
 
+    private $shared_folders = [];
+
 
     /**
      * @param string $name
      * @param string|null $folderPath
      * @return Project
-     * @throws ConfigurationException
+     * @throws \Eliepse\Deployer\Exception\ConfigurationException
+     * @throws \Eliepse\Deployer\Exception\JsonException
      */
     public static function find(string $name, string $folderPath = null): self
     {
         $path = $folderPath ? "$folderPath/$name.json" : base_path("resources/projects/$name.json");
 
-        $config = Config::load($path, new Config(["deploy_path", "git_url"], ["deploy_path", "git_url", "branch", "release_history"]));
+        $config = Config::load($path, new Config(["deploy_path", "git_url"]));
 
         $project = new self();
 
@@ -50,9 +50,11 @@ class Project implements CompilerResource
      * @param string $name
      * @param string|null $folderPath
      * @return Project
-     * @throws ConfigurationException
-     * @throws TaskNotFoundException
-     * @throws CompileException
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\ConfigurationException
+     * @throws \Eliepse\Deployer\Exception\JsonException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     * @throws TaskRunFailedException
      */
     public static function init(string $name, string $folderPath = null): self
     {
@@ -126,13 +128,20 @@ class Project implements CompilerResource
     }
 
 
+    public function getSharedFolders(): array
+    {
+        $this->shared_folders;
+    }
+
+
     public function getCompilingData(): array
     {
         return [
-            "project_name"       => $this->getName(),
-            "project_path"       => $this->getDeployPath(),
-            "project_repository" => $this->getGitUrl(),
-            "project_branch"     => $this->getBranch(),
+            "project_name"           => $this->getName(),
+            "project_path"           => $this->getDeployPath(),
+            "project_repository"     => $this->getGitUrl(),
+            "project_branch"         => $this->getBranch(),
+            "project_shared_folders" => $this->shared_folders,
         ];
     }
 }
