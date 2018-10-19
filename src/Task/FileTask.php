@@ -22,17 +22,21 @@ class FileTask extends CompilableTask implements ShouldCompileFile
      */
     public static function find(string $name): self
     {
-        $filepath = base_path("resources/tasks/$name.php");
-
-        if (!file_exists($filepath))
-            throw new TaskNotFoundException("Task file not found at : $filepath");
-
-        return new self($name, $filepath);
+        return new self($name, base_path("resources/tasks/$name.php"));
     }
 
 
+    /**
+     * FileTask constructor.
+     * @param string $name
+     * @param string $filepath
+     * @throws TaskNotFoundException
+     */
     public function __construct(string $name, string $filepath)
     {
+        if (!file_exists($filepath))
+            throw new TaskNotFoundException("Task file not found at : $filepath");
+
         parent::__construct($name, "");
 
         $this->filepath = $filepath;
@@ -50,4 +54,5 @@ class FileTask extends CompilableTask implements ShouldCompileFile
     {
         return $this->filepath;
     }
+    
 }
