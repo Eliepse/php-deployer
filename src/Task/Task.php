@@ -25,6 +25,12 @@ class Task
      */
     protected $process;
 
+    /**
+     * The process timeout in seconds
+     * @var int
+     */
+    protected $timeout = 240;
+
 
     public function __construct(string $name, string $command)
     {
@@ -40,6 +46,8 @@ class Task
     public function run(): void
     {
         $this->process = new Process($this->command);
+
+        $this->process->setTimeout($this->timeout);
 
         $this->process->run();
 
