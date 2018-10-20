@@ -5,7 +5,10 @@ namespace Eliepse\Deployer\Release;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Eliepse\Deployer\Compiler\CompilerResource;
+use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Project\Project;
+use Eliepse\Deployer\Task\FileTask;
+use Eliepse\Deployer\Task\Task;
 
 class Release implements CompilerResource
 {
@@ -93,6 +96,24 @@ class Release implements CompilerResource
     public function getDeployDuration(): CarbonInterval
     {
         return $this->deploy_started_at->diffAsCarbonInterval($this->deploy_ended_at);
+    }
+
+
+    /**
+     * @return Task
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     * @throws \Eliepse\Deployer\Exception\TaskRunFailedException
+     */
+    public function delete(): Task
+    {
+        $task = FileTask::find('clean');
+
+        (new ProjectCompiler($this->project, $this))->compile($task);
+
+        $task->run();
+
+        return $task;
     }
 
 }
