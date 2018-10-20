@@ -3,17 +3,26 @@
 namespace Eliepse\Deployer\Release;
 
 use Eliepse\Deployer\Compiler\ProjectCompiler;
+use Eliepse\Deployer\Exception\ReleaseFailedException;
+use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Project\Project;
 use Eliepse\Deployer\Task\FileTask;
+use Eliepse\Deployer\Task\Task;
 
 class RunnableRelease extends Release
 {
 
     /**
-     * The tasks sequence to run for this release
+     * The name of tasks to run for this release
      * @var array
      */
     private $tasks_sequence = [];
+
+    /**
+     * Tasks that have been performed
+     * @var array
+     */
+    private $runned_tasks = [];
 
 
     /**
@@ -45,11 +54,31 @@ class RunnableRelease extends Release
     }
 
 
+    public function isRunning(): bool
+    {
+        return $this->getDeployStartedAt() && !$this->getDeployEndedAt();
+    }
+
+
+    public function isTerminated(): bool
+    {
+        return $this->getDeployEndedAt() !== null;
+    }
+
+
+    public function isSuccess(): bool
+    {
+        return count(array_filter($this->runned_tasks, function (Task $task) { return !$task->getProcess()->isSuccessful(); })) === 0;
+    }
+
+
     /**
      * Run the tasks sequence
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
-     * @throws \Eliepse\Deployer\Exception\TaskRunFailedException
+     * @throws ReleaseFailedException
+     * @throws TaskRunFailedException
+     * @todo Add a logging system and/or allow to use an external logging system
      */
     public function runSequence(): self
     {
@@ -63,8 +92,20 @@ class RunnableRelease extends Release
 
             $compiler->compile($task);
 
-            // TODO Add a logging system and/or allow to use an external logging system
-            $task->run();
+            try {
+
+                $this->runned_tasks[] = $task;
+
+                $task->run();
+
+            } catch (TaskRunFailedException $exception) {
+
+                $this->setDeployEndedAt();
+                $this->runned_tasks[] = $this->delete();
+
+                throw new ReleaseFailedException();
+
+            }
         }
 
         $this->setDeployEndedAt();

@@ -111,6 +111,7 @@ class Project implements CompilerResource
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      * @todo Allow to provide custom release as parameter ?
+     * @throws \Eliepse\Deployer\Exception\ReleaseFailedException
      */
     public function deploy(): Release
     {

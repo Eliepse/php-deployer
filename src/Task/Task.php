@@ -91,6 +91,12 @@ class Task
     }
 
 
+    public function getProcess()
+    {
+        return $this->process;
+    }
+
+
     /**
      * Return the execution time of the task
      * @return int Amount of microseconds the task runned
