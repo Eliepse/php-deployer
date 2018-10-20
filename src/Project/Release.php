@@ -25,6 +25,11 @@ class Release implements CompilerResource
     private $deploy_ended_at;
 
 
+    /**
+     * Release constructor.
+     * @param Carbon|null $time
+     * @todo Change $time parameter/attribute to a customizable $name (more clear beside deploy start/end times).
+     */
     public function __construct(Carbon $time = null)
     {
         $this->time = $time ?? Carbon::now();

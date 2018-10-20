@@ -108,6 +108,7 @@ class Project implements CompilerResource
      * @throws TaskRunFailedException
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     * @todo Allow to provide custom release as parameter
      */
     public function deploy(): Release
     {
@@ -119,12 +120,14 @@ class Project implements CompilerResource
 
         $release->setDeployStartedAt();
 
+        // TODO Use release to manage task sequence instead of Project, to permit more flexibility and better logging
         foreach ($this->tasks_sequence as $name) {
 
             $task = FileTask::find($name);
 
             $compiler->compile($task);
 
+            // TODO Add a logging system and/or allow to use an external logging system
             $task->run();
         }
 
