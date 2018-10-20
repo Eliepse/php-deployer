@@ -1,10 +1,11 @@
 <?php
 
-namespace Eliepse\Deployer\Project;
+namespace Eliepse\Deployer\Release;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Eliepse\Deployer\Compiler\CompilerResource;
+use Eliepse\Deployer\Project\Project;
 
 class Release implements CompilerResource
 {
@@ -12,7 +13,7 @@ class Release implements CompilerResource
     /**
      * @var Carbon
      */
-    private $name;
+    protected $name;
 
     /**
      * @var Carbon
@@ -24,15 +25,21 @@ class Release implements CompilerResource
      */
     private $deploy_ended_at;
 
+    /**
+     * @var Project
+     */
+    protected $project;
+
 
     /**
      * Release constructor.
+     * @param Project $belongsTo
      * @param string|null $name
      */
-    public function __construct(string $name = null)
+    public function __construct(Project $belongsTo, string $name = null)
     {
+        $this->project = $belongsTo;
         $this->name = $time ?? Carbon::now()->format("YmdHis");
-        $this->deploy_started_at = Carbon::now();
     }
 
 
@@ -52,6 +59,7 @@ class Release implements CompilerResource
     {
         return [
             "release_name" => $this->getFolderName(),
+            "release_path" => $this->project->getDeployPath() . "/releases/" . $this->getFolderName(),
         ];
     }
 
@@ -86,6 +94,5 @@ class Release implements CompilerResource
     {
         return $this->deploy_started_at->diffAsCarbonInterval($this->deploy_ended_at);
     }
-
 
 }

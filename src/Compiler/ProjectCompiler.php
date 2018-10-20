@@ -5,7 +5,7 @@ namespace Eliepse\Deployer\Compiler;
 
 
 use Eliepse\Deployer\Project\Project;
-use Eliepse\Deployer\Project\Release;
+use Eliepse\Deployer\Release\Release;
 
 class ProjectCompiler extends Compiler
 {
@@ -36,7 +36,6 @@ class ProjectCompiler extends Compiler
             [
                 "releases_path" => $this->project->getDeployPath() . "/releases",
                 "shared_path"   => $this->project->getDeployPath() . "/shared",
-                "release_path"  => $this->project->getDeployPath() . "/releases/" . $this->release->getFolderName(),
             ]
         );
     }

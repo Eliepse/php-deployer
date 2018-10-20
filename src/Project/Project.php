@@ -8,6 +8,8 @@ use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
 use Eliepse\Deployer\Exception\ProjectException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
+use Eliepse\Deployer\Release\Release;
+use Eliepse\Deployer\Release\RunnableRelease;
 use Eliepse\Deployer\Task\FileTask;
 
 class Project implements CompilerResource
@@ -78,7 +80,7 @@ class Project implements CompilerResource
 
         $task = FileTask::find('init');
 
-        (new ProjectCompiler($this, new Release))->compile($task);
+        (new ProjectCompiler($this, new Release($this)))->compile($task);
 
         $task->run();
     }
@@ -108,33 +110,14 @@ class Project implements CompilerResource
      * @throws TaskRunFailedException
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
-     * @todo Allow to provide custom release as parameter
+     * @todo Allow to provide custom release as parameter ?
      */
     public function deploy(): Release
     {
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $release = new Release();
-        $compiler = new ProjectCompiler($this, $release);
-
-        $release->setDeployStartedAt();
-
-        // TODO Use release to manage task sequence instead of Project, to permit more flexibility and better logging
-        foreach ($this->tasks_sequence as $name) {
-
-            $task = FileTask::find($name);
-
-            $compiler->compile($task);
-
-            // TODO Add a logging system and/or allow to use an external logging system
-            $task->run();
-        }
-
-        $release->setDeployEndedAt();
-
-        return $release;
-
+        return (new RunnableRelease($this, $this->tasks_sequence))->runSequence();
     }
 
 
