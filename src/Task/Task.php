@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Task;
 
 
+use Carbon\Carbon;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Symfony\Component\Process\Process;
 
@@ -31,6 +32,12 @@ class Task
      */
     protected $timeout = 240;
 
+    /**
+     * Amount of microseconds the task runned
+     * @var int
+     */
+    protected $exec_time = 0;
+
 
     public function __construct(string $name, string $command)
     {
@@ -45,11 +52,15 @@ class Task
      */
     public function run(): void
     {
+        $t = Carbon::now();
+
         $this->process = new Process($this->command);
 
         $this->process->setTimeout($this->timeout);
 
         $this->process->run();
+
+        $this->exec_time = $t->diffInRealMicroseconds();
 
         if (!$this->process->isSuccessful())
             throw new TaskRunFailedException($this->process->getExitCodeText(), $this->process->getExitCode());
@@ -77,5 +88,15 @@ class Task
     public function getErrorOutput(): string
     {
         return trim($this->process->getErrorOutput());
+    }
+
+
+    /**
+     * Return the execution time of the task
+     * @return int Amount of microseconds the task runned
+     */
+    public function getExecutionTime(): int
+    {
+        return $this->exec_time;
     }
 }

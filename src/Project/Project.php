@@ -117,6 +117,8 @@ class Project implements CompilerResource
         $release = new Release();
         $compiler = new ProjectCompiler($this, $release);
 
+        $release->setDeployStartedAt();
+
         foreach ($this->tasks_sequence as $name) {
 
             $task = FileTask::find($name);
@@ -125,6 +127,8 @@ class Project implements CompilerResource
 
             $task->run();
         }
+
+        $release->setDeployEndedAt();
 
         return $release;
 
