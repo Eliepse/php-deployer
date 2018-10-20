@@ -12,7 +12,7 @@ class Release implements CompilerResource
     /**
      * @var Carbon
      */
-    private $time;
+    private $name;
 
     /**
      * @var Carbon
@@ -27,17 +27,16 @@ class Release implements CompilerResource
 
     /**
      * Release constructor.
-     * @param Carbon|null $time
-     * @todo Change $time parameter/attribute to a customizable $name (more clear beside deploy start/end times).
+     * @param string|null $name
      */
-    public function __construct(Carbon $time = null)
+    public function __construct(string $name = null)
     {
-        $this->time = $time ?? Carbon::now();
+        $this->name = $time ?? Carbon::now()->format("YmdHis");
         $this->deploy_started_at = Carbon::now();
     }
 
 
-    public function getTime(): Carbon { return $this->time; }
+    public function getName(): Carbon { return $this->name; }
 
 
     public function getDeployStartedAt(): Carbon { return $this->deploy_started_at; }
@@ -46,7 +45,7 @@ class Release implements CompilerResource
     public function getDeployEndedAt(): Carbon { return $this->deploy_ended_at; }
 
 
-    public function getFolderName(): string { return $this->time->format("YmdHis"); }
+    public function getFolderName(): string { return $this->name; }
 
 
     public function getCompilingData(): array
