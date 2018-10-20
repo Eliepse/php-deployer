@@ -15,4 +15,4 @@ fi
 
 <?php include 'release.php' ?>
 
-rm -rf <?= $release_path ?>
+<?php include 'clean.php' ?>
