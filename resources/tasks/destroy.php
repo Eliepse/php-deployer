@@ -1,0 +1,1 @@
+rm -vrf <?= $project_path ?>;

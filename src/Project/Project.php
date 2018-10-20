@@ -97,7 +97,7 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $task = FileTask::find('remove');
+        $task = FileTask::find('destroy');
 
         (new Compiler($this))->compile($task);
 
