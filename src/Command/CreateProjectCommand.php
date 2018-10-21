@@ -33,7 +33,15 @@ class CreateProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $path = base_path("resources/projects/$name.json");
+        $filepath = $this->config_path . "$name.json";
+
+        if (file_exists($filepath)) {
+
+            $output->writeln("<error>Config file for the project $name already exists !</error>");
+            $output->writeln("<info>Nothing has been done.</info>");
+
+            return;
+        }
 
         $config = new Config();
 
@@ -48,9 +56,9 @@ class CreateProjectCommand extends Command
         $config->set("links", []);
         $config->set("tasks_sequence", ["release", "links", "activate", "history"]);
 
-        file_put_contents($path, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        file_put_contents($filepath, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        $output->writeln("Project configuration created at $path");
+        $output->writeln("<info>Project configuration created at $filepath.</info>");
     }
 
 
