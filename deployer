@@ -8,9 +8,12 @@ use Symfony\Component\Console\Application;
 
 $application = new Application();
 
-
+// Project command
 $application->add(new \Eliepse\Deployer\Command\CreateProjectCommand());
-$application->add(new \Eliepse\Deployer\Command\CreateTaskCommand());
+$application->add(new \Eliepse\Deployer\Command\InitProjectCommand());
+$application->add(new \Eliepse\Deployer\Command\DestroyProjectCommand());
 
+// Task command
+$application->add(new \Eliepse\Deployer\Command\CreateTaskCommand());
 
 $application->run();
