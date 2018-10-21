@@ -7,7 +7,7 @@ namespace Eliepse\Deployer\Config;
 use Eliepse\Deployer\Exception\ConfigurationException;
 use Eliepse\Deployer\Exception\JsonException;
 
-class Config
+class Config implements \JsonSerializable
 {
 
     /**
@@ -129,10 +129,31 @@ class Config
     }
 
 
+    public function set(string $key, $value): self
+    {
+        // If filter provided, check if the key is allowed
+        if (count($this->filter) === 0 || array_search($key, $this->filter, true) !== false)
+            $this->attributes[ $key ] = $value;
+
+        return $this;
+    }
+
+
     public function getAll(): array
     {
         return $this->attributes;
     }
 
 
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->attributes;
+    }
 }
