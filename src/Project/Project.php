@@ -26,6 +26,8 @@ class Project implements CompilerResource
 
     private $shared_folders = [];
 
+    private $shared_files = [];
+
     private $links = [];
 
     private $tasks_sequence = ["release", "links", "activate", "history"];
@@ -197,6 +199,7 @@ class Project implements CompilerResource
             "project_branch"          => $this->getBranch(),
             "project_release_history" => $this->getReleaseHistory(),
             "project_shared_folders"  => $this->shared_folders,
+            "project_shared_files"    => $this->shared_files,
             "project_links"           => $this->links,
         ];
     }
