@@ -52,8 +52,9 @@ class CreateProjectCommand extends Command
         // Optional
         $config->set("branch", "master");
         $config->set("release_history", 3);
-        $config->set("shared_folders", []);
-        $config->set("links", []);
+        $config->set("shared_folders", ["originPath" => "sharedPath"]);
+        $config->set("shared_files", ["originPath" => "sharedPath"]);
+        $config->set("links", ["sharedPath" => "targetPath"]);
         $config->set("tasks_sequence", ["release", "links", "activate", "history"]);
 
         file_put_contents($filepath, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

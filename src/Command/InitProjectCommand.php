@@ -17,8 +17,8 @@ class InitProjectCommand extends Command
         $this->setName("project:init")
             ->setDescription("Initialize a project")
             ->addArgument("name", InputArgument::REQUIRED, "The name of the project.");
-//            ->addOption("configFIle", "-F", InputArgument::OPTIONAL, "The path to the configuration file of the project.");
     }
+
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
