@@ -11,6 +11,7 @@ $application = new Application();
 // Project command
 $application->add(new \Eliepse\Deployer\Command\CreateProjectCommand());
 $application->add(new \Eliepse\Deployer\Command\InitProjectCommand());
+$application->add(new \Eliepse\Deployer\Command\DeployProjectCommand());
 $application->add(new \Eliepse\Deployer\Command\DestroyProjectCommand());
 
 // Task command

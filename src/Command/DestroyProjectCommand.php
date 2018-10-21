@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
 
 class DestroyProjectCommand extends Command
 {
@@ -21,8 +20,8 @@ class DestroyProjectCommand extends Command
         $this->setName("project:destroy")
             ->setDescription("Permanently all files of an initialized project (except config file).")
             ->addArgument("name", InputArgument::REQUIRED, "The name of the project.");
-//            ->addOption("configFIle", "-F", InputArgument::OPTIONAL, "The path to the configuration file of the project.");
     }
+
 
     protected function interact(InputInterface $input, OutputInterface $output)
     {
@@ -40,6 +39,7 @@ class DestroyProjectCommand extends Command
         }
 
     }
+
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
