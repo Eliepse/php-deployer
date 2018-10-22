@@ -6,9 +6,9 @@ namespace Tests\Unit;
 
 use Eliepse\Deployer\Config\Config;
 use Eliepse\Deployer\Exception\ConfigurationException;
-use PHPUnit\Framework\TestCase;
+use Tests\TestBase;
 
-class ConfigTest extends TestCase
+class ConfigTest extends TestBase
 {
 
     public function testLoad()

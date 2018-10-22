@@ -3,12 +3,12 @@
 namespace Tests\Unit;
 
 use Eliepse\Deployer\Compiler\Compiler;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Task\CompilableTask;
-use Eliepse\Deployer\Task\FileTask;
 use Eliepse\Deployer\Task\Task;
-use PHPUnit\Framework\TestCase;
+use Tests\TestBase;
 
-class TaskTest extends TestCase
+class TaskTest extends TestBase
 {
 
     public function testRun()
@@ -37,12 +37,12 @@ class TaskTest extends TestCase
 
     public function testLoadAndRun()
     {
-        $task = new FileTask("test", base_path("/resources/tasks/test.php"));
+        $task = Deployer::getInstance()->getFileTask("test");
 
         (new Compiler)->compile($task);
 
         $task->run();
-        
+
         $this->assertEquals("Hello world !", $task->getOutput());
     }
 

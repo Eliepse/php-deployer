@@ -4,9 +4,8 @@
 namespace Eliepse\Deployer\Command;
 
 
-use Eliepse\Deployer\Config\ProjectConfig;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\ReleaseFailedException;
-use Eliepse\Deployer\Project\Project;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,7 +36,7 @@ class DeployProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $project = new Project($name, ProjectConfig::load(base_path("/resources/projects/$name.json")));
+        $project = Deployer::getInstance()->getProject($name);
 
         $output->writeln("Starting deployement...");
 

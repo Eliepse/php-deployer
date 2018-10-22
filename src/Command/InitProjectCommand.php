@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Command;
 
 use Eliepse\Deployer\Config\ProjectConfig;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Project\Project;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,7 +37,7 @@ class InitProjectCommand extends Command
     {
         $name = $input->getArgument("name");
 
-        $project = new Project($name, ProjectConfig::load(base_path("/resources/projects/$name.json")));
+        $project = Deployer::getInstance()->getProject($name);
 
         if ($project->isInitialized()) {
 

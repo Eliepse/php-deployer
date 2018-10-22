@@ -4,7 +4,6 @@
 namespace Eliepse\Deployer\Command;
 
 
-use Eliepse\Deployer\Config\Config;
 use Eliepse\Deployer\Config\ProjectConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

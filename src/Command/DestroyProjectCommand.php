@@ -4,8 +4,7 @@
 namespace Eliepse\Deployer\Command;
 
 
-use Eliepse\Deployer\Config\ProjectConfig;
-use Eliepse\Deployer\Project\Project;
+use Eliepse\Deployer\Deployer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -56,7 +55,7 @@ class DestroyProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $project = new Project($name, ProjectConfig::load(base_path("/resources/projects/$name.json")));
+        $project = Deployer::getInstance()->getProject($name);
 
         $output->writeln("Start destroying files of project '$name'.");
 

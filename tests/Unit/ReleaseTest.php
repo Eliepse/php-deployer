@@ -4,30 +4,16 @@
 namespace Tests\Unit;
 
 
-use Eliepse\Deployer\Config\ProjectConfig;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\ReleaseFailedException;
-use Eliepse\Deployer\Project\Project;
-use PHPUnit\Framework\TestCase;
+use Tests\TestBase;
 
-class ReleaseTest extends TestCase
+class ReleaseTest extends TestBase
 {
-
-
-    /**
-     * @param string $name
-     * @return Project
-     * @throws \Eliepse\Deployer\Exception\ConfigurationException
-     * @throws \Eliepse\Deployer\Exception\JsonException
-     */
-    private function loadProject(string $name): Project
-    {
-        return new Project($name, ProjectConfig::load(base_path("/tests/fixtures/projects/$name.json")));
-    }
-
 
     public function testDelete()
     {
-        $project = $this->loadProject("test_deploy");
+        $project = Deployer::getInstance()->getProject("test_deploy");
 
         $project->initialize();
 
@@ -47,7 +33,7 @@ class ReleaseTest extends TestCase
 
     public function testRunFailed()
     {
-        $project = $this->loadProject("test_fail");
+        $project = Deployer::getInstance()->getProject("test_fail");
 
         $project->initialize();
 

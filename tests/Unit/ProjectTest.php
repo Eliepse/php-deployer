@@ -2,30 +2,15 @@
 
 namespace Tests\Unit;
 
-use Eliepse\Deployer\Config\Config;
-use Eliepse\Deployer\Config\ProjectConfig;
-use Eliepse\Deployer\Project\Project;
-use Eliepse\Deployer\Project\Release;
-use PHPUnit\Framework\TestCase;
+use Eliepse\Deployer\Deployer;
+use Tests\TestBase;
 
-class ProjectTest extends TestCase
+class ProjectTest extends TestBase
 {
-
-    /**
-     * @param string $name
-     * @return Project
-     * @throws \Eliepse\Deployer\Exception\ConfigurationException
-     * @throws \Eliepse\Deployer\Exception\JsonException
-     */
-    private function loadProject(string $name): Project
-    {
-        return new Project($name, ProjectConfig::load(base_path("/tests/fixtures/projects/$name.json")));
-    }
-
 
     public function testLoad()
     {
-        $project = $this->loadProject("test_dry");
+        $project = Deployer::getInstance()->getProject("test_dry");
 
         $this->assertEquals("test_dry", $project->getName());
         $this->assertEquals("/path/to/project", $project->getDeployPath());
@@ -37,7 +22,7 @@ class ProjectTest extends TestCase
 
     public function testInit()
     {
-        $project = $this->loadProject("test_deploy");
+        $project = Deployer::getInstance()->getProject("test_deploy");
 
         $project->initialize();
 
@@ -50,9 +35,7 @@ class ProjectTest extends TestCase
 
     public function testDeploy()
     {
-        $project = $this->loadProject("test_deploy");
-
-        $release = $project->deploy();
+        $release = Deployer::project("test_deploy")->deploy();
 
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}"));
         $this->assertTrue(is_link(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}/resources")));
@@ -62,7 +45,7 @@ class ProjectTest extends TestCase
 
     public function testDestroy()
     {
-        $project = $this->loadProject("test_deploy");
+        $project = Deployer::getInstance()->getProject("test_deploy");
 
         $this->assertTrue($project->isInitialized());
 

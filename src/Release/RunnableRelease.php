@@ -3,6 +3,7 @@
 namespace Eliepse\Deployer\Release;
 
 use Eliepse\Deployer\Compiler\ProjectCompiler;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\ReleaseFailedException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Project\Project;
@@ -88,7 +89,7 @@ class RunnableRelease extends Release
 
         foreach ($this->tasks_sequence as $name) {
 
-            $task = new FileTask($name, base_path("/resources/tasks/$name.php"));
+            $task = Deployer::getInstance()->getFileTask($name);
 
             $compiler->compile($task);
 

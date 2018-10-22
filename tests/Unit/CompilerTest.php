@@ -4,9 +4,9 @@ namespace Tests\Unit;
 
 use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Task\CompilableTask;
-use PHPUnit\Framework\TestCase;
+use Tests\TestBase;
 
-class CompilerTest extends TestCase
+class CompilerTest extends TestBase
 {
 
     private function newCompiler(): Compiler
