@@ -14,7 +14,7 @@ class Config implements \JsonSerializable
      * Every value of this array are considered as a required attribute
      * @var array
      */
-    private $required = [];
+    protected $required = [];
 
     /**
      * The config attributes
@@ -26,7 +26,7 @@ class Config implements \JsonSerializable
      * If provided, config only contain keys present in the filter
      * @var array
      */
-    private $filter = [];
+    protected $filter = [];
 
 
     /**
@@ -34,10 +34,10 @@ class Config implements \JsonSerializable
      * @param array $required
      * @param array $filter
      */
-    public function __construct(array $required = [], array $filter = [])
+    public function __construct(array $required = null, array $filter = null)
     {
-        $this->required = $required;
-        $this->filter = $filter;
+        $this->required = $required ?? $this->required;
+        $this->filter = $filter ?? $this->filter;
     }
 
 
@@ -45,16 +45,16 @@ class Config implements \JsonSerializable
      * Create a config object from the provided file
      * @param string $filepath The path to the config file
      * @param Config|null $config When provided, hydrate and return this object instead of creating a new one
-     * @return Config
+     * @return static|Config
      * @throws ConfigurationException
      * @throws JsonException
      */
-    public static function load(string $filepath, Config $config = null): self
+    public static function load(string $filepath, Config $config = null)
     {
         if (!file_exists($filepath))
             throw new ConfigurationException("Configuration file not found at: $filepath");
 
-        $config = $config ?? new Config();
+        $config = $config ?? new static();
 
         $json = json_decode(file_get_contents($filepath), true);
 

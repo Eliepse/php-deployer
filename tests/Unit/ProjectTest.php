@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use Eliepse\Deployer\Config\Config;
+use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Project\Project;
 use Eliepse\Deployer\Project\Release;
 use PHPUnit\Framework\TestCase;
@@ -9,10 +11,21 @@ use PHPUnit\Framework\TestCase;
 class ProjectTest extends TestCase
 {
 
+    /**
+     * @param string $name
+     * @return Project
+     * @throws \Eliepse\Deployer\Exception\ConfigurationException
+     * @throws \Eliepse\Deployer\Exception\JsonException
+     */
+    private function loadProject(string $name): Project
+    {
+        return new Project($name, ProjectConfig::load(base_path("/tests/fixtures/projects/$name.json")));
+    }
+
 
     public function testLoad()
     {
-        $project = Project::find("test_dry", base_path("tests/fixtures/projects"));
+        $project = $this->loadProject("test_dry");
 
         $this->assertEquals("test_dry", $project->getName());
         $this->assertEquals("/path/to/project", $project->getDeployPath());
@@ -24,7 +37,7 @@ class ProjectTest extends TestCase
 
     public function testInit()
     {
-        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
+        $project = $this->loadProject("test_deploy");
 
         $project->initialize();
 
@@ -37,7 +50,7 @@ class ProjectTest extends TestCase
 
     public function testDeploy()
     {
-        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
+        $project = $this->loadProject("test_deploy");
 
         $release = $project->deploy();
 
@@ -49,7 +62,7 @@ class ProjectTest extends TestCase
 
     public function testDestroy()
     {
-        $project = Project::find("test_deploy", base_path("tests/fixtures/projects"));
+        $project = $this->loadProject("test_deploy");
 
         $this->assertTrue($project->isInitialized());
 

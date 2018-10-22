@@ -3,6 +3,7 @@
 
 namespace Eliepse\Deployer\Command;
 
+use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Project\Project;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,11 +21,22 @@ class InitProjectCommand extends Command
     }
 
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\ConfigurationException
+     * @throws \Eliepse\Deployer\Exception\JsonException
+     * @throws \Eliepse\Deployer\Exception\ProjectException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     * @throws \Eliepse\Deployer\Exception\TaskRunFailedException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
 
-        $project = Project::find($name);
+        $project = new Project($name, ProjectConfig::load(base_path("/resources/projects/$name.json")));
 
         if ($project->isInitialized()) {
 

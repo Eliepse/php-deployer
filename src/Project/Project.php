@@ -6,6 +6,7 @@ use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
+use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Exception\ProjectException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Release\Release;
@@ -34,34 +35,23 @@ class Project implements CompilerResource
 
 
     /**
+     * Project constructor.
      * @param string $name
-     * @param string|null $folderPath
-     * @return Project
-     * @throws \Eliepse\Deployer\Exception\ConfigurationException
-     * @throws \Eliepse\Deployer\Exception\JsonException
+     * @param Config $config
      */
-    public static function find(string $name, string $folderPath = null): self
+    public function __construct(string $name, Config $config)
     {
-        $path = $folderPath ? "$folderPath/$name.json" : base_path("resources/projects/$name.json");
-
-        $config = Config::load($path, new Config(["deploy_path", "git_url"]));
-
-        $project = new self();
-
-        $project->name = $name;
-
-        $project->hydrate($config);
-
-        return $project;
+        $this->hydrate($config->getAll());
+        $this->name = $name;
     }
 
 
     /**
-     * @param Config $config
+     * @param array $attributes
      */
-    private function hydrate(Config $config): void
+    public function hydrate(array $attributes): void
     {
-        foreach ($config->getAll() as $key => $value) {
+        foreach ($attributes as $key => $value) {
 
             $this->$key = $value;
 

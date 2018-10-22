@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Command;
 
 
 use Eliepse\Deployer\Config\Config;
+use Eliepse\Deployer\Config\ProjectConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,7 +44,7 @@ class CreateProjectCommand extends Command
             return;
         }
 
-        $config = new Config();
+        $config = new ProjectConfig();
 
         // Required elements
         $config->set("deploy_path", "(required) the path where to deploy the project (prefer absolute path)");
