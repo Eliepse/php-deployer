@@ -38,9 +38,14 @@ class DeployProjectCommand extends Command
 
         } catch (ReleaseFailedException $exception) {
 
-            $output->writeln("<error>Deployement failed ! See error:</error>");
+            $output->writeln("<error>Deployement failed !</error>\n");
 
+            $task = $exception->getRelease()->getLastRunnedTask();
 
+            $output->writeln("Task '{$task->getName()}' shell output:");
+            $output->writeln("=============================");
+            $output->writeln("<comment>" . $exception->getRelease()->getLastRunnedTask()->getErrorOutput() . "</comment>");
+            $output->writeln("=============================\n");
 
         }
     }
