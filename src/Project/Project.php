@@ -6,7 +6,6 @@ use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
 use Eliepse\Deployer\Config\Config;
-use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Exception\ProjectException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Release\Release;
@@ -70,7 +69,7 @@ class Project implements CompilerResource
         if ($this->isInitialized())
             throw new ProjectException("The project has already been initialized.");
 
-        $task = FileTask::find('init');
+        $task = new FileTask('init', base_path("/resources/tasks/init.php"));
 
         (new ProjectCompiler($this, new Release($this)))->compile($task);
 
@@ -89,7 +88,7 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $task = FileTask::find('destroy');
+        $task = new FileTask('destroy', base_path("/resources/tasks/destroy.php"));
 
         (new Compiler($this))->compile($task);
 

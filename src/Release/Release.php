@@ -107,7 +107,7 @@ class Release implements CompilerResource
      */
     public function delete(): Task
     {
-        $task = FileTask::find('clean');
+        $task = new FileTask('clean', base_path("/resources/tasks/clean.php"));
 
         (new ProjectCompiler($this->project, $this))->compile($task);
 

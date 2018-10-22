@@ -37,7 +37,7 @@ class TaskTest extends TestCase
 
     public function testLoadAndRun()
     {
-        $task = FileTask::find("test");
+        $task = new FileTask("test", base_path("/resources/tasks/test.php"));
 
         (new Compiler)->compile($task);
 

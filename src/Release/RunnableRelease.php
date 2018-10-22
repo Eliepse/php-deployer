@@ -88,7 +88,7 @@ class RunnableRelease extends Release
 
         foreach ($this->tasks_sequence as $name) {
 
-            $task = FileTask::find($name);
+            $task = new FileTask($name, base_path("/resources/tasks/$name.php"));
 
             $compiler->compile($task);
 
