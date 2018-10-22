@@ -109,14 +109,14 @@ class Project implements CompilerResource
 
     /**
      * @param RunnableRelease $release
-     * @return Release
+     * @return RunnableRelease
      * @throws ProjectException
      * @throws TaskRunFailedException
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\ReleaseFailedException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      */
-    public function deploy(RunnableRelease $release = null): Release
+    public function deploy(RunnableRelease $release = null): RunnableRelease
     {
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");

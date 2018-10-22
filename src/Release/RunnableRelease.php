@@ -101,9 +101,9 @@ class RunnableRelease extends Release
             } catch (TaskRunFailedException $exception) {
 
                 $this->setDeployEndedAt();
-                $this->runned_tasks[] = $this->delete();
+                $this->delete();
 
-                throw new ReleaseFailedException();
+                throw new ReleaseFailedException($this, "The task '{$task->getName()}' failed.");
 
             }
         }
@@ -111,6 +111,23 @@ class RunnableRelease extends Release
         $this->setDeployEndedAt();
 
         return $this;
+    }
+
+
+    public function getRunnedTasks(): array
+    {
+        return $this->runned_tasks;
+    }
+
+
+    /**
+     * @return Task|null
+     */
+    public function getLastRunnedTask()
+    {
+        $i = count($this->runned_tasks);
+
+        return $i > 0 ? $this->runned_tasks[ $i - 1 ] : null;
     }
 
 

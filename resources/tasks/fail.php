@@ -14,4 +14,4 @@
  * @var string $test
  */
 
-echo "cat --invalid\n";
+echo "cat --fail\n";
