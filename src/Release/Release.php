@@ -46,7 +46,7 @@ class Release implements CompilerResource
     }
 
 
-    public function getName(): Carbon { return $this->name; }
+    public function getName(): string { return $this->name; }
 
 
     public function getDeployStartedAt(): Carbon { return $this->deploy_started_at; }
