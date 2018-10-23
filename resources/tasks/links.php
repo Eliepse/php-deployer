@@ -15,4 +15,4 @@
  */
 
 foreach ($project_links as $from => $to)
-    echo "ln -s -T $shared_path$from $release_path$to\n";
+    echo "ln -sv $shared_path$from $release_path$to\n";
