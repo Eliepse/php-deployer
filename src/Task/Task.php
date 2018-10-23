@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Task;
 
 
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Symfony\Component\Process\Process;
@@ -39,12 +40,27 @@ class Task
      */
     protected $exec_time = 0;
 
+    /**
+     * @var Carbon|null
+     */
+    protected $started_at;
 
-    public function __construct(string $name, string $command)
+    /**
+     * @var Carbon|null
+     */
+    protected $ended_at;
+
+    /**
+     * @var null|\Closure
+     */
+    protected $callback = null;
+
+
+    public function __construct(string $name, string $command, \Closure $callback = null)
     {
-
         $this->name = $name;
         $this->command = $command;
+        $this->callback = $callback;
     }
 
 
@@ -53,8 +69,7 @@ class Task
      */
     public function run(): void
     {
-        $t = Carbon::now();
-        $deployer = Deployer::getInstance();
+        $this->started_at = Carbon::now();
 
         $this->process = new Process($this->command);
 
@@ -62,19 +77,23 @@ class Task
 
         $this->process->run();
 
-        $this->exec_time = $t->diffInRealMicroseconds();
-
-        $deployer->getLogger()->debug("Task {$this->getName()}: ended successfully ({$this->getExecutionTime()} ms)");
+        $this->ended_at = Carbon::now();
 
         if (!$this->process->isSuccessful()) {
 
-            $deployer->getLogger()->error("Task {$this->getName()}: failed", [
-                "OUT" => $this->getOutput(),
-                "ERR" => $this->getErrorOutput(),
-            ]);
+            Deployer::getInstance()
+                ->getLogger()
+                ->error("Task {$this->getName()}: failed", [
+                    "OUT" => $this->getOutput(),
+                    "ERR" => $this->getErrorOutput(),
+                ]);
 
             throw new TaskRunFailedException($this->process->getExitCodeText(), $this->process->getExitCode());
         }
+
+        Deployer::getInstance()
+            ->getLogger()
+            ->debug("Task {$this->getName()}: ended successfully ({$this->getExecutionTime()} ms)");
     }
 
 
@@ -110,10 +129,16 @@ class Task
 
     /**
      * Return the execution time of the task
-     * @return int Amount of microseconds the task runned
+     * @return CarbonInterval
      */
-    public function getExecutionTime(): int
+    public function getExecutionTime(): CarbonInterval
     {
-        return $this->exec_time;
+        return $this->started_at->diffAsCarbonInterval($this->ended_at);
+    }
+
+
+    public function setCallback(\Closure $callbable): void
+    {
+        $this->callback = $callbable;
     }
 }

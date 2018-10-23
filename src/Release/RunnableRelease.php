@@ -7,6 +7,7 @@ use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\ReleaseFailedException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Project\Project;
+use Eliepse\Deployer\Task\FileTask;
 use Eliepse\Deployer\Task\Task;
 
 class RunnableRelease extends Release
@@ -30,12 +31,13 @@ class RunnableRelease extends Release
      * @param Project $belongsTo
      * @param array $tasksSequence
      * @param string|null $name
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      */
     public function __construct(Project $belongsTo, array $tasksSequence, string $name = null)
     {
         parent::__construct($belongsTo, $name);
 
-        $this->tasks_sequence = $tasksSequence;
+        $this->setTasksSequence($tasksSequence);
     }
 
 
@@ -45,10 +47,15 @@ class RunnableRelease extends Release
     /**
      * @param array $tasks_sequence
      * @return Release
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      */
     public function setTasksSequence(array $tasks_sequence): Release
     {
-        $this->tasks_sequence = $tasks_sequence;
+        $this->tasks_sequence = [];
+        $deployer = Deployer::getInstance();
+
+        foreach ($tasks_sequence as $name)
+            $this->tasks_sequence[] = $deployer->getFileTask($name);
 
         return $this;
     }
@@ -76,29 +83,26 @@ class RunnableRelease extends Release
      * Run the tasks sequence
      * @return RunnableRelease
      * @throws ReleaseFailedException
-     * @throws TaskRunFailedException
      * @throws \Eliepse\Deployer\Exception\CompileException
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
-     * @todo Add a logging system and/or allow to use an external logging system
+     * @throws TaskRunFailedException
      */
     public function runSequence(): self
     {
-        $deployer = Deployer::getInstance();
-        $compiler = new ProjectCompiler($this->project, $this);
+        $logger = Deployer::getInstance()->getLogger();
 
-        $deployer->getLogger()->info("Release {$this->name}: starting");
+        $this->compileTasks();
+
+        $logger->info("Release {$this->name}: starting");
 
         $this->setDeployStartedAt();
 
-        foreach ($this->tasks_sequence as $key => $name) {
+        /** @var Task $task */
+        foreach ($this->tasks_sequence as $task) {
 
-            $task = $deployer->getFileTask($name);
-
-            $compiler->compile($task);
+            $this->runned_tasks[] = $task;
 
             try {
-
-                $this->runned_tasks[] = $task;
 
                 $task->run();
 
@@ -107,7 +111,7 @@ class RunnableRelease extends Release
                 $this->setDeployEndedAt();
                 $this->delete();
 
-                $deployer->getLogger()->error("Release {$this->name}: failed", [
+                $logger->error("Release {$this->name}: failed", [
                     "last_task" => $this->getLastRunnedTask()->getName(),
                     "project"   => $this->project->getName(),
                 ]);
@@ -115,13 +119,24 @@ class RunnableRelease extends Release
                 throw new ReleaseFailedException($this, "The task '{$task->getName()}' failed.");
 
             }
+
         }
 
         $this->setDeployEndedAt();
 
-        $deployer->getLogger()->info("Release {$this->name}: ended (in {$this->getDeployDuration()->minutes} min {$this->getDeployDuration()->seconds} s)");
+        $logger->info("Release {$this->name}: ended (in {$this->getDeployDuration()->minutes} min {$this->getDeployDuration()->seconds} s)");
 
         return $this;
+    }
+
+
+    private function compileTasks(): void
+    {
+        $compiler = new ProjectCompiler($this->project, $this);
+
+        /** @var FileTask $task */
+        foreach ($this->tasks_sequence as $task)
+            $compiler->compile($task);
     }
 
 

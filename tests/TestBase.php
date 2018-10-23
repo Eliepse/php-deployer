@@ -25,7 +25,7 @@ class TestBase extends TestCase
     {
         Deployer::make(base_path("/tests/fixtures/projects/"));
 
-        $filename = Carbon::now()->format("YmdHis-");
+        $filename = Carbon::now()->format("YmdHis");
 
         $log = new Logger('Test');
         $log->pushHandler(new StreamHandler(base_path("/storage/logs/$filename.log")));
