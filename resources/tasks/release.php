@@ -23,7 +23,7 @@ foreach ($project_shared_files as $from => $to)
     echo "if [ ! -f $shared_path$to ]; then mv -v $release_path$from $shared_path$to; fi\n";
 
 foreach ($project_shared_folders as $from => $to)
-    echo "if [ -d $release_path$from ]; then rm -rf $release_path$from; fi\n";
+    echo "if [ -d $release_path$to ]; then rm -rf $release_path$to; fi\n";
 
 foreach ($project_shared_files as $from => $to)
-    echo "if [ -f $release_path$from ]; then rm -rf $release_path$from; fi\n";
+    echo "if [ -f $release_path$to ]; then rm -rf $release_path$to; fi\n";
