@@ -73,6 +73,9 @@ class Project implements CompilerResource
 
         (new ProjectCompiler($this, new Release($this)))->compile($task);
 
+        Deployer::getInstance()->getLogger()
+            ->warning("Project {$this->getName()}: initialized");
+
         $task->run();
     }
 
@@ -92,6 +95,9 @@ class Project implements CompilerResource
 
         (new Compiler($this))->compile($task);
 
+        Deployer::getInstance()->getLogger()
+            ->warning("Project {$this->getName()}: destroyed");
+
         $task->run();
     }
 
@@ -110,7 +116,14 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        return ($release ?? new RunnableRelease($this, $this->tasks_sequence))->runSequence();
+        $release = $release ?? new RunnableRelease($this, $this->tasks_sequence);
+
+        $release->runSequence();
+
+        Deployer::getInstance()->getLogger()
+            ->info("Project {$this->getName()}: deployed successfully release {$release->getName()}");
+
+        return $release;
     }
 
 

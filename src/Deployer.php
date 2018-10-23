@@ -7,14 +7,30 @@ namespace Eliepse\Deployer;
 use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Project\Project;
 use Eliepse\Deployer\Task\FileTask;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class Deployer
 {
+    /**
+     * @var Deployer|null
+     */
     private static $uniqueInstance = null;
 
+    /**
+     * @var string
+     */
     private $projects_folder;
 
+    /**
+     * @var string
+     */
     private $tasks_folder;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
 
     protected function __construct(string $projectsFolder = null, string $tasksFolder = null)
@@ -22,6 +38,8 @@ class Deployer
         $this->projects_folder = $projectsFolder ?? realpath(base_path('/resources/projects'));
 
         $this->tasks_folder = $tasksFolder ?? realpath(base_path('/resources/tasks'));
+
+        $this->logger = new NullLogger();
     }
 
 
@@ -52,19 +70,52 @@ class Deployer
      * @throws Exception\ConfigurationException
      * @throws Exception\JsonException
      */
-    public static function project(string $name): Project { return self::getInstance()->getProject($name); }
+    public static function project(string $name): Project
+    {
+        return self::getInstance()->getProject($name);
+    }
 
 
-    public function setProjectsPath(string $path): void { $this->projects_folder = $path; }
+    public function setProjectsPath(string $path): void
+    {
+        $this->projects_folder = $path;
+    }
 
 
-    public function setTasksPath(string $path): void { $this->tasks_folder = $path; }
+    public function setTasksPath(string $path): void
+    {
+        $this->tasks_folder = $path;
+    }
 
 
-    public function getProjectsPath(): string { return $this->projects_folder; }
+    public function getProjectsPath(): string
+    {
+        return $this->projects_folder;
+    }
 
 
-    public function getTasksPath(): string { return $this->tasks_folder; }
+    public function getTasksPath(): string
+    {
+        return $this->tasks_folder;
+    }
+
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
 
 
     /**
@@ -88,5 +139,6 @@ class Deployer
     {
         return new FileTask($name, $this->tasks_folder . "/$name.php");
     }
+
 
 }

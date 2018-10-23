@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Task;
 
 
 use Carbon\Carbon;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Symfony\Component\Process\Process;
 
@@ -53,6 +54,7 @@ class Task
     public function run(): void
     {
         $t = Carbon::now();
+        $deployer = Deployer::getInstance();
 
         $this->process = new Process($this->command);
 
@@ -62,8 +64,17 @@ class Task
 
         $this->exec_time = $t->diffInRealMicroseconds();
 
-        if (!$this->process->isSuccessful())
+        $deployer->getLogger()->debug("Task {$this->getName()}: ended successfully ({$this->getExecutionTime()} ms)");
+
+        if (!$this->process->isSuccessful()) {
+
+            $deployer->getLogger()->error("Task {$this->getName()}: failed", [
+                "OUT" => $this->getOutput(),
+                "ERR" => $this->getErrorOutput(),
+            ]);
+
             throw new TaskRunFailedException($this->process->getExitCodeText(), $this->process->getExitCode());
+        }
     }
 
 

@@ -7,7 +7,6 @@ use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\ReleaseFailedException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 use Eliepse\Deployer\Project\Project;
-use Eliepse\Deployer\Task\FileTask;
 use Eliepse\Deployer\Task\Task;
 
 class RunnableRelease extends Release
@@ -75,21 +74,25 @@ class RunnableRelease extends Release
 
     /**
      * Run the tasks sequence
-     * @throws \Eliepse\Deployer\Exception\CompileException
-     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
+     * @return RunnableRelease
      * @throws ReleaseFailedException
      * @throws TaskRunFailedException
+     * @throws \Eliepse\Deployer\Exception\CompileException
+     * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      * @todo Add a logging system and/or allow to use an external logging system
      */
     public function runSequence(): self
     {
+        $deployer = Deployer::getInstance();
         $compiler = new ProjectCompiler($this->project, $this);
+
+        $deployer->getLogger()->info("Release {$this->name}: starting");
 
         $this->setDeployStartedAt();
 
-        foreach ($this->tasks_sequence as $name) {
+        foreach ($this->tasks_sequence as $key => $name) {
 
-            $task = Deployer::getInstance()->getFileTask($name);
+            $task = $deployer->getFileTask($name);
 
             $compiler->compile($task);
 
@@ -104,12 +107,19 @@ class RunnableRelease extends Release
                 $this->setDeployEndedAt();
                 $this->delete();
 
+                $deployer->getLogger()->error("Release {$this->name}: failed", [
+                    "last_task" => $this->getLastRunnedTask()->getName(),
+                    "project"   => $this->project->getName(),
+                ]);
+
                 throw new ReleaseFailedException($this, "The task '{$task->getName()}' failed.");
 
             }
         }
 
         $this->setDeployEndedAt();
+
+        $deployer->getLogger()->info("Release {$this->name}: ended (in {$this->getDeployDuration()->minutes} min {$this->getDeployDuration()->seconds} s)");
 
         return $this;
     }
