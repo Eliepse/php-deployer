@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Command;
 
 
+use Eliepse\Deployer\Deployer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,13 +12,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateTaskCommand extends Command
 {
-    private $config_path;
+
+    /**
+     * @var Deployer
+     */
+    protected $deployer;
 
 
-    public function __construct(?string $name = null)
+    public function __construct(?string $name = null, Deployer $deployer = null)
     {
         parent::__construct($name);
-        $this->config_path = base_path("resources/tasks/");
+
+        $this->deployer = $deployer ?? new Deployer();
     }
 
 
@@ -32,7 +38,7 @@ class CreateTaskCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $filepath = $this->config_path . "$name.php";
+        $filepath = $this->deployer->getTasksPath() . "/$name.php";
 
         if (file_exists($filepath)) {
 

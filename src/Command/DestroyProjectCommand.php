@@ -15,6 +15,19 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class DestroyProjectCommand extends Command
 {
 
+    /**
+     * @var Deployer
+     */
+    protected $deployer;
+
+
+    public function __construct(?string $name = null, Deployer $deployer = null)
+    {
+        parent::__construct($name);
+
+        $this->deployer = $deployer ?? new Deployer();
+    }
+
     protected function configure()
     {
         $this->setName("project:destroy")
@@ -55,7 +68,7 @@ class DestroyProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $project = Deployer::getInstance()->getProject($name);
+        $project = $this->deployer->getProject($name);
 
         $output->writeln("Start destroying files of project '$name'.");
 

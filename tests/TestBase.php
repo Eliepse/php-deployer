@@ -18,19 +18,21 @@ use PHPUnit\Framework\TestCase;
 class TestBase extends TestCase
 {
 
-    /**
-     * @throws \Exception
-     */
-    public static function setUpBeforeClass()
+    protected $deployer;
+
+
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
-        Deployer::make(base_path("/tests/fixtures/projects/"));
+        parent::__construct($name, $data, $dataName);
+
+        $this->deployer = new Deployer(base_path("/tests/fixtures/projects/"));
 
         $filename = Carbon::now()->format("YmdHis");
 
         $log = new Logger('Test');
         $log->pushHandler(new StreamHandler(base_path("/storage/logs/$filename.log")));
 
-        Deployer::getInstance()->setLogger($log);
+        $this->deployer->setLogger($log);
 
         $log->debug(static::class);
         $log->debug("===============================");
@@ -39,9 +41,7 @@ class TestBase extends TestCase
 
     protected function setUp()
     {
-        Deployer::getInstance()
-            ->getLogger()
-            ->debug("# " . $this->getName());
+        $this->deployer->getLogger()->debug("# " . $this->getName());
     }
 
 }

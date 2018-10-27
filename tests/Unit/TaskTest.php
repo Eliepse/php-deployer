@@ -13,7 +13,7 @@ class TaskTest extends TestBase
 
     public function testRun()
     {
-        $task = new Task("foo", "echo bar");
+        $task = new Task("foo", "echo bar", $this->deployer);
 
         $task->run();
 
@@ -25,7 +25,7 @@ class TaskTest extends TestBase
     {
         $compiler = (new Compiler)->addAdditionalData("foo", "bar");
 
-        $task = new CompilableTask("foo", 'echo <?= $foo ?>');
+        $task = new CompilableTask("foo", 'echo <?= $foo ?>', $this->deployer);
 
         $compiler->compile($task);
 
@@ -37,7 +37,7 @@ class TaskTest extends TestBase
 
     public function testLoadAndRun()
     {
-        $task = Deployer::getInstance()->getFileTask("test");
+        $task = $this->deployer->getFileTask("test");
 
         (new Compiler)->compile($task);
 

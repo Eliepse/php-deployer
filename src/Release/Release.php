@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Project\Project;
-use Eliepse\Deployer\Task\FileTask;
 use Eliepse\Deployer\Task\Task;
 
 class Release implements CompilerResource
@@ -33,15 +33,22 @@ class Release implements CompilerResource
      */
     protected $project;
 
+    /**
+     * @var Deployer
+     */
+    protected $deployer;
+
 
     /**
      * Release constructor.
      * @param Project $belongsTo
+     * @param Deployer $deployer
      * @param string|null $name
      */
-    public function __construct(Project $belongsTo, string $name = null)
+    public function __construct(Project $belongsTo, Deployer $deployer, string $name = null)
     {
         $this->project = $belongsTo;
+        $this->deployer = $deployer;
         $this->name = $time ?? Carbon::now()->format("YmdHis");
     }
 
@@ -107,7 +114,7 @@ class Release implements CompilerResource
      */
     public function delete(): Task
     {
-        $task = new FileTask('clean', base_path("/resources/tasks/clean.php"));
+        $task = $this->deployer->getFileTask('clean');
 
         (new ProjectCompiler($this->project, $this))->compile($task);
 

@@ -30,12 +30,13 @@ class RunnableRelease extends Release
      * Release constructor.
      * @param Project $belongsTo
      * @param array $tasksSequence
+     * @param Deployer $deployer
      * @param string|null $name
      * @throws \Eliepse\Deployer\Exception\TaskNotFoundException
      */
-    public function __construct(Project $belongsTo, array $tasksSequence, string $name = null)
+    public function __construct(Project $belongsTo, array $tasksSequence, Deployer $deployer, string $name = null)
     {
-        parent::__construct($belongsTo, $name);
+        parent::__construct($belongsTo, $deployer, $name);
 
         $this->setTasksSequence($tasksSequence);
     }
@@ -52,10 +53,9 @@ class RunnableRelease extends Release
     public function setTasksSequence(array $tasks_sequence): Release
     {
         $this->tasks_sequence = [];
-        $deployer = Deployer::getInstance();
 
         foreach ($tasks_sequence as $name)
-            $this->tasks_sequence[] = $deployer->getFileTask($name);
+            $this->tasks_sequence[] = $this->deployer->getFileTask($name);
 
         return $this;
     }
@@ -89,7 +89,7 @@ class RunnableRelease extends Release
      */
     public function runSequence(): self
     {
-        $logger = Deployer::getInstance()->getLogger();
+        $logger = $this->deployer->getLogger();
 
         $this->compileTasks();
 

@@ -51,16 +51,16 @@ class Task
     protected $ended_at;
 
     /**
-     * @var null|\Closure
+     * @var Deployer
      */
-    protected $callback = null;
+    private $deployer;
 
 
-    public function __construct(string $name, string $command, \Closure $callback = null)
+    public function __construct(string $name, string $command, Deployer $deployer)
     {
         $this->name = $name;
         $this->command = $command;
-        $this->callback = $callback;
+        $this->deployer = $deployer;
     }
 
 
@@ -81,7 +81,7 @@ class Task
 
         if (!$this->process->isSuccessful()) {
 
-            Deployer::getInstance()
+            $this->deployer
                 ->getLogger()
                 ->error("Task {$this->getName()}: failed", [
                     "OUT" => $this->getOutput(),
@@ -91,7 +91,7 @@ class Task
             throw new TaskRunFailedException($this->process->getExitCodeText(), $this->process->getExitCode());
         }
 
-        Deployer::getInstance()
+        $this->deployer
             ->getLogger()
             ->debug("Task {$this->getName()}: ended successfully ({$this->getExecutionTime()} ms)");
     }
@@ -136,9 +136,4 @@ class Task
         return $this->started_at->diffAsCarbonInterval($this->ended_at);
     }
 
-
-    public function setCallback(\Closure $callbable): void
-    {
-        $this->callback = $callbable;
-    }
 }

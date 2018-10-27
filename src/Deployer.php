@@ -13,11 +13,6 @@ use Psr\Log\NullLogger;
 class Deployer
 {
     /**
-     * @var Deployer|null
-     */
-    private static $uniqueInstance = null;
-
-    /**
      * @var string
      */
     private $projects_folder;
@@ -33,46 +28,13 @@ class Deployer
     private $logger;
 
 
-    protected function __construct(string $projectsFolder = null, string $tasksFolder = null)
+    public function __construct(string $projectsFolder = null, string $tasksFolder = null)
     {
         $this->projects_folder = $projectsFolder ?? realpath(base_path('/resources/projects'));
 
         $this->tasks_folder = $tasksFolder ?? realpath(base_path('/resources/tasks'));
 
         $this->logger = new NullLogger();
-    }
-
-
-    final private function __clone() { }
-
-
-    public static function make(string $projectsFolder = null, string $tasksFolder = null): self
-    {
-        self::$uniqueInstance = new self(...func_get_args());
-
-        return self::$uniqueInstance;
-    }
-
-
-    public static function getInstance(): Deployer
-    {
-        if (self::$uniqueInstance === null) {
-            self::$uniqueInstance = new self(...func_get_args());
-        }
-
-        return self::$uniqueInstance;
-    }
-
-
-    /**
-     * @param string $name
-     * @return Project
-     * @throws Exception\ConfigurationException
-     * @throws Exception\JsonException
-     */
-    public static function project(string $name): Project
-    {
-        return self::getInstance()->getProject($name);
     }
 
 
@@ -126,7 +88,7 @@ class Deployer
      */
     public function getProject(string $name): Project
     {
-        return new Project($name, ProjectConfig::load($this->projects_folder . "/$name.json"));
+        return new Project($name, ProjectConfig::load($this->projects_folder . "/$name.json"), $this);
     }
 
 
@@ -137,7 +99,7 @@ class Deployer
      */
     public function getFileTask(string $name): FileTask
     {
-        return new FileTask($name, $this->tasks_folder . "/$name.php");
+        return new FileTask($name, $this->tasks_folder . "/$name.php", $this);
     }
 
 

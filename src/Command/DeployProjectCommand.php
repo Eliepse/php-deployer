@@ -14,6 +14,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DeployProjectCommand extends Command
 {
 
+    /**
+     * @var Deployer
+     */
+    protected $deployer;
+
+
+    public function __construct(?string $name = null, Deployer $deployer = null)
+    {
+        parent::__construct($name);
+
+        $this->deployer = $deployer ?? new Deployer();
+    }
+
     protected function configure()
     {
         $this->setName("project:deploy")
@@ -36,7 +49,7 @@ class DeployProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $project = Deployer::getInstance()->getProject($name);
+        $project = $this->deployer->getProject($name);
 
         $output->writeln("Starting deployement...");
 

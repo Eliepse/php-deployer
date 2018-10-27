@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Task;
 
 
 use Eliepse\Deployer\Compiler\ShouldCompileFile;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\TaskNotFoundException;
 
 class FileTask extends CompilableTask implements ShouldCompileFile
@@ -16,28 +17,18 @@ class FileTask extends CompilableTask implements ShouldCompileFile
 
 
     /**
-     * @param string $name
-     * @return FileTask
-     * @throws TaskNotFoundException
-     */
-    public static function find(string $name): self
-    {
-        return new self($name, base_path("resources/tasks/$name.php"));
-    }
-
-
-    /**
      * FileTask constructor.
      * @param string $name
      * @param string $filepath
+     * @param Deployer $deployer
      * @throws TaskNotFoundException
      */
-    public function __construct(string $name, string $filepath)
+    public function __construct(string $name, string $filepath, Deployer $deployer)
     {
         if (!file_exists($filepath))
             throw new TaskNotFoundException("Task file not found at : $filepath");
 
-        parent::__construct($name, "");
+        parent::__construct($name, "", $deployer);
 
         $this->filepath = $filepath;
         $this->command_raw = $this->getUncompiled();

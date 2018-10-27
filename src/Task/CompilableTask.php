@@ -5,6 +5,7 @@ namespace Eliepse\Deployer\Task;
 
 
 use Eliepse\Deployer\Compiler\ShouldCompile;
+use Eliepse\Deployer\Deployer;
 use Eliepse\Deployer\Exception\CompileException;
 use Eliepse\Deployer\Exception\TaskRunFailedException;
 
@@ -23,9 +24,9 @@ class CompilableTask extends Task implements ShouldCompile
     protected $compiled = false;
 
 
-    public function __construct(string $name, string $command_raw)
+    public function __construct(string $name, string $command_raw, Deployer $deployer)
     {
-        parent::__construct($name, "");
+        parent::__construct($name, "", $deployer);
 
         $this->command_raw = $command_raw;
     }

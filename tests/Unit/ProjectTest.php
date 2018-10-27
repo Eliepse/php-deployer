@@ -10,7 +10,7 @@ class ProjectTest extends TestBase
 
     public function testLoad()
     {
-        $project = Deployer::getInstance()->getProject("test_dry");
+        $project = $this->deployer->getProject("test_dry");
 
         $this->assertEquals("test_dry", $project->getName());
         $this->assertEquals("/path/to/project", $project->getDeployPath());
@@ -22,7 +22,7 @@ class ProjectTest extends TestBase
 
     public function testInit()
     {
-        $project = Deployer::getInstance()->getProject("test_deploy");
+        $project = $this->deployer->getProject("test_deploy");
 
         $project->initialize();
 
@@ -35,7 +35,7 @@ class ProjectTest extends TestBase
 
     public function testDeploy()
     {
-        $release = Deployer::project("test_deploy")->deploy();
+        $release = $this->deployer->getProject("test_deploy")->deploy();
 
         $this->assertDirectoryExists(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}"));
         $this->assertTrue(is_link(base_path("tests/fixtures/temp/test_deploy/releases/{$release->getFolderName()}/resources")));
@@ -45,7 +45,7 @@ class ProjectTest extends TestBase
 
     public function testDestroy()
     {
-        $project = Deployer::getInstance()->getProject("test_deploy");
+        $project = $this->deployer->getProject("test_deploy");
 
         $this->assertTrue($project->isInitialized());
 

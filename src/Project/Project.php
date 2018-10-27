@@ -14,6 +14,11 @@ use Eliepse\Deployer\Release\RunnableRelease;
 
 class Project implements CompilerResource
 {
+    /**
+     * @var Deployer
+     */
+    private $deployer;
+
     private $name;
 
     private $deploy_path;
@@ -37,11 +42,13 @@ class Project implements CompilerResource
      * Project constructor.
      * @param string $name
      * @param Config $config
+     * @param Deployer $deployer
      */
-    public function __construct(string $name, Config $config)
+    public function __construct(string $name, Config $config, Deployer $deployer)
     {
         $this->hydrate($config->getAll());
         $this->name = $name;
+        $this->deployer = $deployer;
     }
 
 
@@ -69,11 +76,11 @@ class Project implements CompilerResource
         if ($this->isInitialized())
             throw new ProjectException("The project has already been initialized.");
 
-        $task = Deployer::getInstance()->getFileTask('init');
+        $task = $this->deployer->getFileTask('init');
 
-        (new ProjectCompiler($this, new Release($this)))->compile($task);
+        (new ProjectCompiler($this, new Release($this, $this->deployer)))->compile($task);
 
-        Deployer::getInstance()->getLogger()
+        $this->deployer->getLogger()
             ->warning("Project {$this->getName()}: initialized");
 
         $task->run();
@@ -91,11 +98,11 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $task = Deployer::getInstance()->getFileTask('destroy');
+        $task = $this->deployer->getFileTask('destroy');
 
         (new Compiler($this))->compile($task);
 
-        Deployer::getInstance()->getLogger()
+        $this->deployer->getLogger()
             ->warning("Project {$this->getName()}: destroyed");
 
         $task->run();
@@ -116,11 +123,11 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $release = $release ?? new RunnableRelease($this, $this->tasks_sequence);
+        $release = $release ?? new RunnableRelease($this, $this->tasks_sequence, $this->deployer);
 
         $release->runSequence();
 
-        Deployer::getInstance()->getLogger()
+        $this->deployer->getLogger()
             ->info("Project {$this->getName()}: deployed successfully release {$release->getName()}");
 
         return $release;

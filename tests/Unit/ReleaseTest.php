@@ -13,7 +13,7 @@ class ReleaseTest extends TestBase
 
     public function testDelete()
     {
-        $project = Deployer::getInstance()->getProject("test_deploy");
+        $project = $this->deployer->getProject("test_deploy");
 
         $project->initialize();
 
@@ -33,7 +33,7 @@ class ReleaseTest extends TestBase
 
     public function testRunFailed()
     {
-        $project = Deployer::getInstance()->getProject("test_fail");
+        $project = $this->deployer->getProject("test_fail");
 
         $project->initialize();
 

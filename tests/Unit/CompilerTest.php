@@ -26,7 +26,7 @@ class CompilerTest extends TestBase
 
     public function testCompileTask()
     {
-        $task = new CompilableTask("foo", 'echo <?= $foo ?>');
+        $task = new CompilableTask("foo", 'echo <?= $foo ?>', $this->deployer);
 
         $this->newCompiler()->compile($task);
 

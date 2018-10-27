@@ -14,6 +14,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InitProjectCommand extends Command
 {
 
+    /**
+     * @var Deployer
+     */
+    protected $deployer;
+
+
+    public function __construct(?string $name = null, Deployer $deployer = null)
+    {
+        parent::__construct($name);
+
+        $this->deployer = $deployer ?? new Deployer();
+    }
+
+
     protected function configure()
     {
         $this->setName("project:init")
@@ -37,7 +51,7 @@ class InitProjectCommand extends Command
     {
         $name = $input->getArgument("name");
 
-        $project = Deployer::getInstance()->getProject($name);
+        $project = $this->deployer->getProject($name);
 
         if ($project->isInitialized()) {
 
