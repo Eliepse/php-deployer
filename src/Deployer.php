@@ -84,11 +84,10 @@ class Deployer
      * @param string $name
      * @return Project
      * @throws Exception\ConfigurationException
-     * @throws Exception\JsonException
      */
     public function getProject(string $name): Project
     {
-        return new Project($name, ProjectConfig::load($this->projects_folder . "/$name.json"), $this);
+        return new Project($name, ProjectConfig::load($this->projects_folder . "/$name.yaml"), $this);
     }
 
 

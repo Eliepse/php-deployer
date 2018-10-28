@@ -13,8 +13,8 @@ class ProjectTest extends TestBase
         $project = $this->deployer->getProject("test_dry");
 
         $this->assertEquals("test_dry", $project->getName());
-        $this->assertEquals("/path/to/project", $project->getDeployPath());
-        $this->assertEquals("git@github.com:Username/repository.git", $project->getGitUrl());
+        $this->assertEquals("/home/vagrant/www/deploy-path", $project->getDeployPath());
+        $this->assertEquals("git@github.com:Username/repository-name.git", $project->getGitUrl());
         $this->assertEquals("dev", $project->getBranch());
         $this->assertEquals(3, $project->getReleaseHistory());
     }

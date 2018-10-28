@@ -1,0 +1,17 @@
+deploy_path: tests/fixtures/temp/test_deploy
+git_url: git@github.com:Eliepse/php-deployer.git
+
+shared_folders:
+  - from: /resources
+    to: /resources
+
+shared_files:
+  - from: /LICENSE
+    to: /LICENSE.md
+
+links:
+  - from: /resources
+    to: /resources
+
+  - from: /LICENSE.md
+    to: /LICENSE.md

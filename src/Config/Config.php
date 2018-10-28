@@ -6,6 +6,8 @@ namespace Eliepse\Deployer\Config;
 
 use Eliepse\Deployer\Exception\ConfigurationException;
 use Eliepse\Deployer\Exception\JsonException;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Yaml\Yaml;
 
 class Config implements \JsonSerializable
 {
@@ -47,7 +49,6 @@ class Config implements \JsonSerializable
      * @param Config|null $config When provided, hydrate and return this object instead of creating a new one
      * @return static|Config
      * @throws ConfigurationException
-     * @throws JsonException
      */
     public static function load(string $filepath, Config $config = null)
     {
@@ -56,12 +57,7 @@ class Config implements \JsonSerializable
 
         $config = $config ?? new static();
 
-        $json = json_decode(file_get_contents($filepath), true);
-
-        if (json_last_error() > 0)
-            throw new JsonException(json_last_error_msg());
-
-        $config->hydrate($json);
+        $config->hydrate(Yaml::parseFile($filepath));
 
         return $config;
     }

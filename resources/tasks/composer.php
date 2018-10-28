@@ -15,4 +15,5 @@
  */
 
 echo "cd $release_path\n";
-echo "composer install --no-interaction --optimize-autoloader --no-progress\n";
+echo "composer install --no-interaction --optimize-autoloader --no-progress --no-dev\n";
+echo "composer dump-autoload --optimize --no-dev --classmap-authoritative\n";

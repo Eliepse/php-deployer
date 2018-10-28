@@ -13,7 +13,7 @@ class ConfigTest extends TestBase
 
     public function testLoad()
     {
-        $config = Config::load(base_path("tests/fixtures/projects/test_dry.json"));
+        $config = Config::load(base_path("tests/fixtures/projects/test_dry.yaml"));
 
         $this->assertEquals("dev", $config->get("branch"));
     }
@@ -24,7 +24,7 @@ class ConfigTest extends TestBase
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage("The configuration is missing required elements: fooz, barz");
 
-        Config::load(base_path("tests/fixtures/projects/test_dry.json"), new Config(["fooz", "barz"]));
+        Config::load(base_path("tests/fixtures/projects/test_dry.yaml"), new Config(["fooz", "barz"]));
     }
 
 
@@ -33,13 +33,13 @@ class ConfigTest extends TestBase
         $this->expectException(ConfigurationException::class);
         $this->expectExceptionMessage("The configuration is missing required values for keys: baz");
 
-        Config::load(base_path("tests/fixtures/projects/test_dry.json"), new Config(["foo", "baz"]));
+        Config::load(base_path("tests/fixtures/projects/test_dry.yaml"), new Config(["foo", "baz"]));
     }
 
 
     public function testFilter()
     {
-        $config = Config::load(base_path("tests/fixtures/projects/test_dry.json"), new Config([], ["branch"]));
+        $config = Config::load(base_path("tests/fixtures/projects/test_dry.yaml"), new Config([], ["branch"]));
 
         $this->assertEquals(["branch" => "dev"], $config->getAll());
     }

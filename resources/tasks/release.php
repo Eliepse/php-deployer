@@ -16,14 +16,14 @@
 
 echo "git clone $project_repository --branch=$project_branch --depth=1 -q $release_path\n";
 
-foreach ($project_shared_folders as $from => $to)
-    echo "if [ ! -d $shared_path$to ]; then mv -v $release_path$from $shared_path$to; fi\n";
+foreach ($project_shared_folders as $rule)
+    echo "if [ ! -d $shared_path" . $rule["to"] . " ]; then mv -v $release_path" . $rule["from"] . " $shared_path" . $rule["to"] . "; fi\n";
 
-foreach ($project_shared_files as $from => $to)
-    echo "if [ ! -f $shared_path$to ]; then mv -v $release_path$from $shared_path$to; fi\n";
+foreach ($project_shared_files as $rule)
+    echo "if [ ! -f $shared_path" . $rule["to"] . " ]; then mv -v $release_path" . $rule["from"] . " $shared_path" . $rule["to"] . "; fi\n";
 
-foreach ($project_shared_folders as $from => $to)
-    echo "if [ -d $release_path$to ]; then rm -rf $release_path$to; fi\n";
+foreach ($project_shared_folders as $rule)
+    echo "if [ -d $release_path" . $rule["to"] . " ]; then rm -rf $release_path" . $rule["to"] . "; fi\n";
 
-foreach ($project_shared_files as $from => $to)
-    echo "if [ -f $release_path$to ]; then rm -rf $release_path$to; fi\n";
+foreach ($project_shared_files as $rule)
+    echo "if [ -f $release_path" . $rule["to"] . " ]; then rm -rf $release_path" . $rule["to"] . "; fi\n";

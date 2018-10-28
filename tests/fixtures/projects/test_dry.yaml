@@ -1,0 +1,21 @@
+foo: bar
+baz:
+
+deploy_path: /home/vagrant/www/deploy-path
+git_url: git@github.com:Username/repository-name.git
+branch: dev
+
+shared_folders:
+  - from: /resources
+    to: /resources
+
+shared_files:
+  - from: /LICENSE
+    to: /LICENSE.md
+
+links:
+  - from: /resources
+    to: /resources
+
+  - from: /LICENSE.md
+    to: /LICENSE.md

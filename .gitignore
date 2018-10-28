@@ -1,7 +1,9 @@
 /vendor/
 .idea/
 /resources/temp/
+/resources/projects/*
 /tests/fixtures/temp/*
 
 !.gitkeep
 /storage/logs/*
+!/resources/projects/sample.yaml

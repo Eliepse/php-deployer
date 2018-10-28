@@ -14,5 +14,5 @@
  * @var string $test
  */
 
-foreach ($project_links as $from => $to)
-    echo "ln -sv $shared_path$from $release_path$to\n";
+foreach ($project_links as $rule)
+    echo "ln -sv $shared_path" . $rule["from"] . " $release_path" . $rule["to"] . "\n";

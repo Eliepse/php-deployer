@@ -1,0 +1,30 @@
+deploy_path: /home/vagrant/www/deploy-path
+git_url: git@github.com:Username/repository-name.git
+branch: master
+release_history: 3
+
+shared_folders:
+  - from: /storage
+    to: /storage
+
+shared_files:
+  - from: /.env.example
+    to: /.env
+
+links:
+  - from: /storage
+    to: /storage
+
+  - from: /storage/app/public
+    to: /public/storage
+
+  - from: /.env
+    to: /.env
+
+tasks_sequence:
+  - release
+  - links
+  - composer
+  - npm
+  - activate
+  - history
