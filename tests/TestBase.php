@@ -5,6 +5,7 @@ namespace Tests;
 
 
 use Carbon\Carbon;
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Deployer;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;

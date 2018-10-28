@@ -2,6 +2,7 @@
 
 namespace Eliepse\Deployer\Project;
 
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;

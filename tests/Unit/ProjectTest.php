@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Deployer;
 use Tests\TestBase;
 

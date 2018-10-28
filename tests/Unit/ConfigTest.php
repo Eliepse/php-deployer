@@ -4,6 +4,7 @@
 namespace Tests\Unit;
 
 
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Config\Config;
 use Eliepse\Deployer\Exception\ConfigurationException;
 use Tests\TestBase;

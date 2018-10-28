@@ -1,6 +1,10 @@
 <?php
 
-function base_path(string $path = ""): string
-{
-    return __DIR__ . "/../$path";
+namespace Eliepse\Deployer {
+
+    function base_path(string $path = ""): string
+    {
+        return __DIR__ . "/../$path";
+    }
+
 }
