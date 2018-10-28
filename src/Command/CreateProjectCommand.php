@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Command;
 
 
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Config\ProjectConfig;
 use Eliepse\Deployer\Deployer;
 use Symfony\Component\Console\Command\Command;
@@ -39,7 +40,7 @@ class CreateProjectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument("name");
-        $filepath = $this->deployer->getProjectsPath() . "/$name.json";
+        $filepath = $this->deployer->getProjectsPath() . "/$name.yaml";
 
         if (file_exists($filepath)) {
 
@@ -49,21 +50,7 @@ class CreateProjectCommand extends Command
             return;
         }
 
-        $config = new ProjectConfig();
-
-        // Required elements
-        $config->set("deploy_path", "(required) the path where to deploy the project (prefer absolute path)");
-        $config->set("git_url", "(required) the git url to get the project");
-
-        // Optional
-        $config->set("branch", "master");
-        $config->set("release_history", 3);
-        $config->set("shared_folders", ["originPath" => "sharedPath"]);
-        $config->set("shared_files", ["originPath" => "sharedPath"]);
-        $config->set("links", ["sharedPath" => "targetPath"]);
-        $config->set("tasks_sequence", ["release", "links", "activate", "history"]);
-
-        file_put_contents($filepath, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        copy(base_path("/resources/projects/sample.yaml"), $filepath);
 
         $output->writeln("<info>Project configuration created at $filepath.</info>");
     }

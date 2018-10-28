@@ -4,6 +4,7 @@
 namespace Eliepse\Deployer\Command;
 
 
+use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Deployer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -48,7 +49,7 @@ class CreateTaskCommand extends Command
             return;
         }
 
-        file_put_contents($filepath, 'echo <?= $test ?>');
+        copy(base_path("/resources/tasks/test.php"), $filepath);
 
         $output->writeln("<info>Task created at $filepath.</info>");
     }
