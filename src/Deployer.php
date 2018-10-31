@@ -23,6 +23,11 @@ class Deployer
     private $tasks_folder;
 
     /**
+     * @var string
+     */
+    private $task_base_folder;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -32,7 +37,9 @@ class Deployer
     {
         $this->projects_folder = $projectsFolder ?? realpath(base_path('/resources/projects'));
 
-        $this->tasks_folder = $tasksFolder ?? realpath(base_path('/resources/tasks'));
+        $this->task_base_folder = realpath(base_path('/resources/tasks'));
+
+        $this->tasks_folder = $tasksFolder ?? $this->task_base_folder;
 
         $this->logger = new NullLogger();
     }
@@ -98,7 +105,10 @@ class Deployer
      */
     public function getFileTask(string $name): FileTask
     {
-        return new FileTask($name, $this->tasks_folder . "/$name.php", $this);
+        if (file_exists($this->tasks_folder . "/$name.php"))
+            return new FileTask($name, $this->tasks_folder . "/$name.php", $this);
+        else
+            return new FileTask($name, $this->task_base_folder . "/$name.php", $this);
     }
 
 
