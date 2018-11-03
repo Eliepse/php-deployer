@@ -87,41 +87,56 @@ class Config implements \JsonSerializable
 
         }
 
-        $this->checkRequired();
+        $this->checkRequired(true);
 
     }
 
 
     /**
+     * @param bool $throw
+     * @return bool
      * @throws ConfigurationException
      */
-    private function checkRequired(): void
+    private function checkRequired(bool $throw = false): bool
     {
         // If no required keys provided, abort checking
         if (count($this->required) === 0)
-            return;
+            return true;
 
         // Find missing elements
         $missing_keys = array_values(array_diff($this->required, array_keys($this->attributes)));
 
         if (count($missing_keys) > 0) {
             $keys = join(", ", $missing_keys);
-            throw new ConfigurationException("The configuration is missing required elements: $keys");
+
+            if ($throw)
+                throw new ConfigurationException("The configuration is missing required elements: $keys");
+            else
+                return false;
+
         }
 
         // Find empty required elements
-        $empty_keys = array_filter(array_intersect_key($this->attributes, array_flip($this->required)), function ($value) { return empty($value); });
+        $empty_keys = array_filter(array_intersect_key($this->attributes, array_flip($this->required)), function ($value) {
+            return empty($value);
+        });
 
         if (count($empty_keys) > 0) {
             $keys = join(", ", array_keys($empty_keys));
-            throw new ConfigurationException("The configuration is missing required values for keys: $keys");
+
+            if ($throw)
+                throw new ConfigurationException("The configuration is missing required values for keys: $keys");
+            else
+                return false;
         }
+
+        return true;
     }
 
 
     public function get(string $key, $default = null)
     {
-        return $this->attributes[ $key ] ?? $default;
+        return $this->attributes[$key] ?? $default;
     }
 
 
@@ -129,7 +144,7 @@ class Config implements \JsonSerializable
     {
         // If filter provided, check if the key is allowed
         if (count($this->filter) === 0 || array_search($key, $this->filter, true) !== false)
-            $this->attributes[ $key ] = $value;
+            $this->attributes[$key] = $value;
 
         return $this;
     }
@@ -140,6 +155,10 @@ class Config implements \JsonSerializable
         return $this->attributes;
     }
 
+    public function isValid(): bool
+    {
+        return $this->checkRequired(false);
+    }
 
     /**
      * Specify data which should be serialized to JSON
