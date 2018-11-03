@@ -165,7 +165,7 @@ class Project implements CompilerResource
      */
     public function getBranch(): string
     {
-        return $this->config->get("git_branch", "master");
+        return $this->config->get("branch", "master");
     }
 
 
@@ -174,7 +174,7 @@ class Project implements CompilerResource
      */
     public function getReleaseHistory(): int
     {
-        return $this->config->get("git_branch", 3);
+        return $this->config->get("release_history", 3);
     }
 
 
@@ -209,7 +209,7 @@ class Project implements CompilerResource
      */
     public function getLinks(): array
     {
-        return $this->config->get("shared_files", []);
+        return $this->config->get("links", []);
     }
 
 
