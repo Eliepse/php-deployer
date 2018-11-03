@@ -32,6 +32,11 @@ class Deployer
      */
     private $logger;
 
+    /**
+     * @var string
+     */
+    private $config_class = ProjectConfig::class;
+
 
     public function __construct(string $projectsFolder = null, string $tasksFolder = null)
     {
@@ -56,6 +61,17 @@ class Deployer
         $this->tasks_folder = $path;
     }
 
+    /**
+     * @param string $class
+     * @throws \Exception
+     */
+    public function setConfigClass(string $class)
+    {
+        if (!class_exists($class))
+            throw new \Exception("Class $class does not exists.");
+
+        $this->config_class = $class;
+    }
 
     public function getProjectsPath(): string
     {
@@ -90,11 +106,10 @@ class Deployer
     /**
      * @param string $name
      * @return Project
-     * @throws Exception\ConfigurationException
      */
     public function getProject(string $name): Project
     {
-        return new Project($name, ProjectConfig::load($this->projects_folder . "/$name.yaml"), $this);
+        return new Project($name, call_user_func($this->config_class . "::load", $this->projects_folder . "/$name.yaml"), $this);
     }
 
 
