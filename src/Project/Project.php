@@ -2,7 +2,6 @@
 
 namespace Eliepse\Deployer\Project;
 
-use function Eliepse\Deployer\base_path;
 use Eliepse\Deployer\Compiler\Compiler;
 use Eliepse\Deployer\Compiler\CompilerResource;
 use Eliepse\Deployer\Compiler\ProjectCompiler;
@@ -20,23 +19,15 @@ class Project implements CompilerResource
      */
     private $deployer;
 
+    /**
+     * @var string
+     */
     private $name;
 
-    private $deploy_path;
-
-    private $git_url;
-
-    private $branch = "master";
-
-    private $release_history = 3;
-
-    private $shared_folders = [];
-
-    private $shared_files = [];
-
-    private $links = [];
-
-    private $tasks_sequence = ["release", "links", "activate", "history"];
+    /**
+     * @var Config
+     */
+    protected $config;
 
 
     /**
@@ -47,22 +38,12 @@ class Project implements CompilerResource
      */
     public function __construct(string $name, Config $config, Deployer $deployer)
     {
-        $this->hydrate($config->getAll());
         $this->name = $name;
+
+        $config->isValid();
+        $this->config = $config;
+
         $this->deployer = $deployer;
-    }
-
-
-    /**
-     * @param array $attributes
-     */
-    public function hydrate(array $attributes): void
-    {
-        foreach ($attributes as $key => $value) {
-
-            $this->$key = $value;
-
-        }
     }
 
 
@@ -124,7 +105,7 @@ class Project implements CompilerResource
         if (!$this->isInitialized())
             throw new ProjectException("The project has not been initialized.");
 
-        $release = $release ?? new RunnableRelease($this, $this->tasks_sequence, $this->deployer);
+        $release = $release ?? new RunnableRelease($this, $this->getTasksSequence(), $this->deployer);
 
         $release->runSequence();
 
@@ -135,6 +116,9 @@ class Project implements CompilerResource
     }
 
 
+    /**
+     * @return bool
+     */
     public function isInitialized(): bool
     {
         if (!is_dir($this->getDeployPath())) return false;
@@ -150,29 +134,29 @@ class Project implements CompilerResource
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDeployPath()
+    public function getDeployPath(): string
     {
-        return $this->deploy_path[0] === "/" ? $this->deploy_path : base_path($this->deploy_path);
+        return $this->config->get("deploy_path");
     }
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getGitUrl()
+    public function getGitUrl(): string
     {
-        return $this->git_url;
+        return $this->config->get("git_url");
     }
 
 
@@ -181,7 +165,7 @@ class Project implements CompilerResource
      */
     public function getBranch(): string
     {
-        return $this->branch;
+        return $this->config->get("git_branch", "master");
     }
 
 
@@ -190,27 +174,59 @@ class Project implements CompilerResource
      */
     public function getReleaseHistory(): int
     {
-        return $this->release_history;
+        return $this->config->get("git_branch", 3);
     }
 
 
+    /**
+     * @return array
+     */
+    public function getTasksSequence(): array
+    {
+        return $this->config->get("tasks_sequence", ["release", "links", "activate", "history"]);
+    }
+
+    /**
+     * @return array
+     */
     public function getSharedFolders(): array
     {
-        $this->shared_folders;
+        return $this->config->get("shared_folders", []);
     }
 
 
+    /**
+     * @return array
+     */
+    public function getSharedFiles(): array
+    {
+        return $this->config->get("shared_files", []);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getLinks(): array
+    {
+        return $this->config->get("shared_files", []);
+    }
+
+
+    /**
+     * @return array
+     */
     public function getCompilingData(): array
     {
         return [
-            "project_name"            => $this->getName(),
-            "project_path"            => $this->getDeployPath(),
-            "project_repository"      => $this->getGitUrl(),
-            "project_branch"          => $this->getBranch(),
+            "project_name" => $this->getName(),
+            "project_path" => $this->getDeployPath(),
+            "project_repository" => $this->getGitUrl(),
+            "project_branch" => $this->getBranch(),
             "project_release_history" => $this->getReleaseHistory(),
-            "project_shared_folders"  => $this->shared_folders,
-            "project_shared_files"    => $this->shared_files,
-            "project_links"           => $this->links,
+            "project_shared_folders" => $this->getSharedFolders(),
+            "project_shared_files" => $this->getSharedFiles(),
+            "project_links" => $this->getLinks(),
         ];
     }
 }
