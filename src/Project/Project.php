@@ -214,6 +214,15 @@ class Project implements CompilerResource
 
 
     /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+
+    /**
      * @return array
      */
     public function getCompilingData(): array
