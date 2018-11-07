@@ -53,16 +53,28 @@ class Release implements CompilerResource
     }
 
 
-    public function getName(): string { return $this->name; }
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
 
-    public function getDeployStartedAt(): Carbon { return $this->deploy_started_at; }
+    public function getDeployStartedAt(): Carbon
+    {
+        return $this->deploy_started_at;
+    }
 
 
-    public function getDeployEndedAt(): Carbon { return $this->deploy_ended_at; }
+    public function getDeployEndedAt(): Carbon
+    {
+        return $this->deploy_ended_at;
+    }
 
 
-    public function getFolderName(): string { return $this->name; }
+    public function getFolderName(): string
+    {
+        return $this->name;
+    }
 
 
     public function getCompilingData(): array
@@ -121,6 +133,11 @@ class Release implements CompilerResource
         $task->run();
 
         return $task;
+    }
+
+    public function getProject(): Project
+    {
+        return $this->project;
     }
 
 }
